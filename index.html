@@ -283,10 +283,20 @@ function parse_all() {
     [w, h] = size.split('x').map(Number);
 
     var font = parse_text('font');
-    var text = parse_text('logo');
 
     var fw = parseInt(document.getElementById("fw").value);
     var fh = parseInt(document.getElementById("fh").value);
+
+    // just autodetect the size for now
+    fw = ~~(font.length / 256);
+    fh = 8;
+
+    document.getElementById("fw").value = fw;
+    document.getElementById("fh").value = fh;
+
+
+    var text = parse_text('logo');
+
 
     if (render=='font') {
         text = [...Array(256).keys()]
@@ -321,14 +331,6 @@ function parse_text(id) {
     }
 
     if (fw !=0 && fh!=0) {
-        // Make sure it's really 6x8 not 5x7
-        if (fw==5 && fh==7) {
-            fw = 6; fh = 8;
-        }
-         // Some files state it as 8x6, swap h/w
-        if (fw == 8 && fh==6)  {
-            fw = 6; fh = 8;
-        }
         document.getElementById("fw").value = fw;
         document.getElementById("fh").value = fh;
     }
