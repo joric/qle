@@ -288,7 +288,10 @@ function parse_all() {
     var fh = parseInt(document.getElementById("fh").value);
 
     // just autodetect the size for now
-    fw = ~~(font.length / 256);
+
+    console.log(font.length);
+
+    fw = Math.ceil(font.length / 256);
     fh = 8;
 
     document.getElementById("fw").value = fw;
