@@ -72,7 +72,7 @@ function update_hint(id, len, fw, fh, w, h) {
 }
 
 function load_current_font() {
-  var font = $('#dec').text().split(',').map(Number);
+  var font = $('#dec').val().split(',').map(Number);
   var fw = parseInt($('#fw').val());
   var fh = parseInt($('#fh').val());
   return [font, fw, fh];
@@ -102,6 +102,7 @@ function export_raw(data, fw, fh, w, h) {
 function export_font(data, fw, fh) {
   let tpl = 'static const char PROGMEM font[] = {\n%s};\n';
   $('#font').val(format_data(tpl, data, true, fw * '0x00, '.length, '\t'));
+  $('#dec').val(data.join(','));
 }
 
 function getpixel(x, y, imageData) {
@@ -135,11 +136,13 @@ function parse_image(canvas_id) {
     }
   }
 
-  let [font, fw, fh] = load_current_font();
+  if (canvas_id == "canvas_font") {
 
-  if (canvas_id == "canvas_font")
+    let [_, fw, fh] = load_current_font();
     export_font(data, fw, fh, w, h);
-  else
+    parse_logo_file($('#logo').val());
+
+  } else
     export_raw(data, 8, 8, w, h);
 }
 
@@ -266,7 +269,6 @@ function render_logo(chars, font, fw, fh) {
   let wrap = ~~(w / fw);
   let h = ~~(chars.length / wrap) * fh;
   render_image("canvas_logo", chars, font, fw, fh, w, h);
-
   update_hint('hint_logo', chars.length, fw, fh, w, h);
 }
 
@@ -374,8 +376,7 @@ function getXY(e) {
 
   function parse_font_file(text) {
     let res = parse_text(text, true);
-    let raw = res.data.join(',');
-    $('#dec').text(raw);
+    $('#dec').text(res.data.join(','));
     $('#fw').val(res.fw);
     $('#fh').val(res.fh);
     render_font(res.data, res.fw, res.fh);
@@ -383,19 +384,20 @@ function getXY(e) {
   }
 
 
-  function load_font_file(url, load_logo) {
+  function load_font_file(url, update_logo, load_logo) {
     $('#font').load(url, function(text) {
       $('#font').val(text);
-      res = parse_font_file(text);
+      parse_font_file(text);
       if (load_logo)
-        load_logo_file('files/logo_reader.c', res.data, res.fw, res.fh);
+        load_logo_file(load_logo);
+      if (update_logo)
+        parse_logo_file($('#logo').val());
     });
   }
 
-  function load_logo_file(url, font, fw, fh) {
+  function load_logo_file(url) {
     $('#logo').load(url, function(text) {
-      let logo = parse_text(text).data;
-      render_logo(logo, font, fw, fh);
+      parse_logo_file(text);
     });
   }
 
@@ -414,14 +416,15 @@ function getXY(e) {
 
   $(document).ready(function() {
 
-
     $('#examples a').on('click', function(e) {
       let url = 'https://raw.githubusercontent.com/qmk/qmk_firmware/master/' + e.target.text + '/glcdfont.c';
       load_font_file(url, true);
     });
 
-    load_font_file('files/glcdfont.c', true);
-    load_raw_file('files/logo.c');
+
+    load_font_file('files/glcdfont.c', true, 'files/logo.c');
+    load_raw_file('files/raw.c');
+
 
     $('#small').on('click', function(e) {
       $('canvas').css('width', 'auto');
