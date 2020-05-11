@@ -1,3 +1,54 @@
+undo = {
+  'canvas_font': [],
+  'canvas_logo': [],
+  'canvas_raw': []
+};
+
+function capture_image(id) {
+  var canvas = document.getElementById(id);
+  var ctx = canvas.getContext('2d');
+  capturedImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+  if (undo[id].length > 1000)
+    undo[id].pop();
+
+  undo[id].unshift(capturedImage);
+}
+
+
+function set_pixel(id, x, y, color) {
+  var canvas = document.getElementById(id);
+  var ctx = canvas.getContext('2d');
+}
+
+function bresenham(x0, y0, x1, y1, color) {
+  dx = x1 - x0;
+  dy = y1 - y0;
+  y = y0;
+  d = 0;
+  for (x = x0; x <= x1; x++) {
+    set_pixel(id, x, y, color);
+    d += dy;
+    if (2 * d >= dx) d -= dx, y--;
+  }
+}
+
+function draw_pixel(id, x, y) {
+  var canvas = document.getElementById(id);
+  var ctx = canvas.getContext('2d');
+
+  let capturedImage = undo[id][0];
+
+  let color = !getpixel(x, y, capturedImage);
+
+  let r = g = b = color ? 255 : 0;
+  let a = 255;
+
+  ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + (a / 255) + ")";
+  ctx.fillRect(x, y, 1, 1);
+}
+
+
 function update_hint(id, len, fw, fh, w, h) {
   let lb = len + ' bytes';
   let im = w + 'x' + h + ' image';
@@ -108,7 +159,8 @@ window.addEventListener("paste", function(e) {
         canvas.height = this.height;
         ctx.drawImage(img, 0, 0);
         parse_image(canvas_id);
-
+        undo[canvas_id] = [];
+        capture_image(canvas_id);
       };
       var URLObj = window.URL || window.webkitURL;
       img.src = URLObj.createObjectURL(imageBlob);
@@ -186,6 +238,8 @@ function render_image(ctrl, chars, font, fw, fh, w, h) {
   }
 
   ctx.putImageData(imageData, 0, 0);
+
+  capture_image(ctrl);
 }
 
 
@@ -303,6 +357,18 @@ function parse_text(text, is_font) {
   };
 }
 
+function getXY(e) {
+  let x = e.pageX - e.target.offsetLeft;
+  let y = e.pageY - e.target.offsetTop;
+  let vw = e.target.offsetWidth;
+  let vh = e.target.offsetHeight;
+  let w = e.target.width;
+  let h = e.target.height;
+  x = Math.floor(x * w / vw);
+  y = Math.floor(y * h / vh);
+  return [x, y];
+}
+
 
 (function($) {
 
@@ -339,6 +405,12 @@ function parse_text(text, is_font) {
     });
   }
 
+
+  function arrayRotate(arr, reverse) {
+    if (reverse) arr.unshift(arr.pop());
+    else arr.push(arr.shift());
+    return arr;
+  }
 
   $(document).ready(function() {
 
@@ -387,6 +459,78 @@ function parse_text(text, is_font) {
     $('#raw').on('input', function(e) {
       parse_raw_file(e.target.value);
     });
+
+    var buttonPressed = 0;
+
+    $('canvas').mousedown(function(e) {
+
+      let id = e.target.id;
+
+      if (id == 'canvas_logo') return;
+
+      buttonPressed = e.button == 0;
+      if (!buttonPressed) return;
+
+      capture_image(id);
+
+      let [x, y] = getXY(e);
+      draw_pixel(id, x, y);
+
+    });
+
+    $('canvas').mousemove(function(e) {
+
+      if (buttonPressed) {
+        let [x, y] = getXY(e);
+        draw_pixel(e.target.id, x, y);
+      }
+
+    });
+
+    $('canvas').mouseup(function(e) {
+
+      let id = e.target.id;
+
+      if (e.button == 0) {
+
+        undo[id].shift();
+        capture_image(id);
+        parse_image(id);
+      }
+
+      buttonPressed = 0;
+    });
+
+
+    $("body").keydown(function(e) {
+
+      var tab = $("#nav-tab a.active")[0].id;
+      if (tab == "nav-logo-tab") return;
+      var id = tab == "nav-font-tab" ? "canvas_font" : "canvas_raw";
+
+      if (undo[id].length == 0) return;
+
+
+      if (e.ctrlKey || e.metaKey) {
+
+        var canvas = document.getElementById(id);
+        var ctx = canvas.getContext('2d');
+
+        if (e.keyCode == 89) { //Ctrl+Y
+          arrayRotate(undo[id], true);
+          ctx.putImageData(undo[id][0], 0, 0);
+          parse_image(id);
+        }
+
+        if (e.keyCode == 90) { //Ctrl+Z
+          arrayRotate(undo[id], false);
+          ctx.putImageData(undo[id][0], 0, 0);
+          parse_image(id);
+        }
+      }
+
+    });
+
 
   });
 
