@@ -5,13 +5,19 @@ function update_hint(id, len, fw, fh, w, h) {
   let ch = ~~(len / fw) + ' characters';
   let cc = ~~(w / fw) + 'x' + ~~(h / fh) + ' characters';
   let bp = fw + ' bytes per character';
+  let e = $('#' + id);
 
-  if (id == 'hint_font')
-    $('#' + id).text([lb, ff, ch, bp, im, cc].join(', '));
-  else if (id == 'hint_logo')
-    $('#' + id).text([lb, ff, ch, im, cc].join(', '));
-  else if (id == 'hint_raw')
-    $('#' + id).text([lb, ff, ch, im, cc].join(', '));
+  switch (id) {
+    case 'hint_font':
+      e.text([lb, ff, ch, bp, im, cc].join(', '));
+      break;
+    case 'hint_logo':
+      e.text([lb, ff, im, cc].join(', '));
+      break;
+    case 'hint_raw':
+      e.text([lb, ff, ch, im, cc].join(', '));
+      break;
+  }
 }
 
 function load_current_font() {
@@ -21,43 +27,30 @@ function load_current_font() {
   return [font, fw, fh];
 }
 
+function wrap(w, prefix, str) {
+  var re = new RegExp('(.{1,' + w + '})( +|$\n?)|(.{1,' + w + '})', 'g');
+  return str.replace(re, prefix + '$1\n');
+}
+
+function format_data(tpl, data, hex, w, prefix) {
+  if (hex) {
+    data = data.map(function(x) {
+      return '0x' + ('0' + x.toString(16).toUpperCase()).slice(-2);
+    });
+  }
+  let out = wrap(w, prefix, data.join(', '));
+  return tpl.replace('%s', out).replace(/\t/g, '    ');
+}
 
 function export_raw(data, fw, fh, w, h) {
-  let s = (data).map(String).join(', ');
-  s = s.replace(/(.{1,130})( +|$\n?)|(.{1,130})/g, '        $1\n');
-
-  let out = 'static void render_logo(void) {\n'
-    +'    static const char PROGMEM raw_logo[] = {\n'
-
-  out += s;
-  out += '    };\n'
-      +'    oled_write_raw_P(raw_logo, sizeof(raw_logo));\n'
-      +'}\n';
-
-  $('#raw').val(out);
+  let tpl = 'static void render_logo(void) {\n\tstatic const char PROGMEM raw_logo[] = {\n%s\t};\n\toled_write_raw_P(raw_logo, false);\n}\n';
+  $('#raw').val(format_data(tpl, data, false, 130, '\t\t'));
   update_hint('hint_raw', data.length, fw, fh, w, h);
 }
 
 function export_font(data, fw, fh) {
-
-  var out = ''; //'// '+fw+'x'+fh+' font\n';
-
-  out += 'static const char PROGMEM font[] = {\n';
-
-  for (var i = 0; i < data.length; i++) {
-
-    if (i > 0)
-      out += i % fw ? ', ' : ',\n';
-
-    s = data[i].toString(16);
-    if (s.length < 2)
-      s = '0' + s;
-    out += '0x' + s;
-  }
-
-  out += '\n};\n';
-
-  $('#font').val(out);
+  let tpl = 'static const char PROGMEM font[] = {\n%s};\n';
+  $('#font').val(format_data(tpl, data, true, fw * '0x00, '.length, '\t'));
 }
 
 function getpixel(x, y, imageData) {
@@ -200,11 +193,9 @@ function render_raw(ctrl, data) {
   var font = data;
   var fw = 8;
   var fh = 8;
-
   var w = 128;
-  var cols = ~~(w/fw);
-  var h = ~~ (data.length/cols);
-
+  var cols = ~~(w / fw);
+  var h = ~~(data.length / cols);
   let total = ~~(font.length / fw);
   let chars = [...Array(total).keys()];
   render_image(ctrl, chars, font, fw, fh, w, h);
@@ -231,15 +222,11 @@ function parse_logo_file(text) {
   render_logo(logo, font, fw, fh);
 }
 
-
 function render_font(font, fw, fh) {
-
   let total = ~~(font.length / fw);
   let w = fw * 32;
-  let h = fh * (total / 32);
-
+  let h = fh * ~~(total / 32);
   update_hint('hint_font', font.length, fw, fh, w, h);
-
   let chars = [...Array(total).keys()];
   render_image("canvas_font", chars, font, fw, fh, w, h);
 }
@@ -361,13 +348,7 @@ function parse_text(text, is_font) {
       load_font_file(url, true);
     });
 
-    //load_font_file('files/glcdfont.c', true);
     load_font_file('files/glcdfont.c', true);
-    //load_font_file('files/glcdfont.treadstone48.c', true);
-    //load_font_file('files/avr.c', true);
-    //load_font_file('files/zen.c', true);
-
-
     load_raw_file('files/logo.c');
 
     $('#small').on('click', function(e) {
