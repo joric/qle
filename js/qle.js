@@ -362,13 +362,13 @@ function parse_text(text, is_font) {
     });
 
     //load_font_file('files/glcdfont.c', true);
-    load_font_file('files/glcdfont.jorne.c', true);
+    load_font_file('files/glcdfont.c', true);
     //load_font_file('files/glcdfont.treadstone48.c', true);
     //load_font_file('files/avr.c', true);
     //load_font_file('files/zen.c', true);
 
 
-    load_raw_file('files/kyria_logo.c');
+    load_raw_file('files/logo.c');
 
     $('#small').on('click', function(e) {
       $('canvas').css('width', 'auto');
