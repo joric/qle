@@ -4,6 +4,27 @@ hist = {
   'canvas_raw': []
 };
 
+function load_image(src) {
+  var id = get_current_canvas_id();
+  var canvas = document.getElementById(id);
+  var ctx = canvas.getContext('2d');
+  var img = new Image();
+
+  img.onload = function() {
+    if (this.width > 256 || this.height > 256) {
+      alert("Image is too large! 256x256 pixels max.");
+      src='';
+      return;
+    }
+    canvas.width = this.width;
+    canvas.height = this.height;
+    ctx.drawImage(img, 0, 0);
+    parse_image(id);
+    capture_image(id);
+  };
+
+  img.src = src;
+}
 
 function scale_all() {
   var tab = $("input[name='scale']:checked");
@@ -21,29 +42,29 @@ function scale_all() {
     $(c).css('width', c.width * g);
     let id = c.id;
     let div = $('#' + id + '+.grid-container')[0];
-    let [_,fw,fh] = load_current_font();
-    let w = g*fw;
-    let h = g*fh;
+    let [_, fw, fh] = load_current_font();
+    let w = g * fw;
+    let h = g * fh;
     let cw = c.width * g;
     let ch = c.height * g;
 
-let s =''
-+'<svg width="'+cw+'" height="'+ch+'" xmlns="http://www.w3.org/2000/svg">'
-+'  <defs>'
-+'    <pattern id="smallGrid" width="'+g+'" height="'+g+'" patternUnits="userSpaceOnUse">'
-+'      <path d="M '+g+' 0 L 0 0 0 '+g+'" fill="none" stroke="gray" stroke-width="0.5"/>'
-+'    </pattern>'
-+'    <pattern id="grid" width="'+w+'" height="'+h+'" patternUnits="userSpaceOnUse">'
-+ (size!='medium' ? ('      <rect width="'+w+'" height="'+h+'" fill="url(#smallGrid)"/>') : '')
-+'      <path d="M '+w+' 0 L 0 0 0 '+h+'" fill="none" stroke="gray" stroke-width="1"/>'
-+'    </pattern>'
-+'  </defs>'
-+'  <rect width="100%" height="100%" fill="url(#grid)" />'
-+'</svg>';
+    let s = '' +
+      '<svg width="' + cw + '" height="' + ch + '" xmlns="http://www.w3.org/2000/svg">' +
+      '  <defs>' +
+      '    <pattern id="smallGrid" width="' + g + '" height="' + g + '" patternUnits="userSpaceOnUse">' +
+      '      <path d="M ' + g + ' 0 L 0 0 0 ' + g + '" fill="none" stroke="gray" stroke-width="0.5"/>' +
+      '    </pattern>' +
+      '    <pattern id="grid" width="' + w + '" height="' + h + '" patternUnits="userSpaceOnUse">' +
+      (size != 'medium' ? ('      <rect width="' + w + '" height="' + h + '" fill="url(#smallGrid)"/>') : '') +
+      '      <path d="M ' + w + ' 0 L 0 0 0 ' + h + '" fill="none" stroke="gray" stroke-width="1"/>' +
+      '    </pattern>' +
+      '  </defs>' +
+      '  <rect width="100%" height="100%" fill="url(#grid)" />' +
+      '</svg>';
 
-      div.innerHTML = g!=1 ? s : '';
+    div.innerHTML = g != 1 ? s : '';
 
-      // grids adds fine on all tabs, I don't know why it's showing only on the font tab. css issues?
+    // grids adds fine on all tabs, I don't know why it's showing only on the font tab. css issues?
   }
 }
 
@@ -235,18 +256,8 @@ window.addEventListener("paste", function(e) {
 
   retrieveImageFromClipboardAsBlob(e, function(imageBlob) {
     if (imageBlob) {
-      var canvas = document.getElementById(canvas_id);
-      var ctx = canvas.getContext('2d');
-      var img = new Image();
-      img.onload = function() {
-        canvas.width = this.width;
-        canvas.height = this.height;
-        ctx.drawImage(img, 0, 0);
-        parse_image(canvas_id);
-        capture_image(canvas_id);
-      };
       var URLObj = window.URL || window.webkitURL;
-      img.src = URLObj.createObjectURL(imageBlob);
+      load_image(URLObj.createObjectURL(imageBlob));
     }
   });
 }, false);
@@ -467,8 +478,8 @@ function parse_text(text, is_font) {
 
 function getXY(e) {
   let c = e.target;
-  let x = e.offsetX;//e.pageX - c.offsetLeft;
-  let y = e.offsetY;//e.pageY - c.offsetTop;
+  let x = e.offsetX; //e.pageX - c.offsetLeft;
+  let y = e.offsetY; //e.pageY - c.offsetTop;
   let vw = c.offsetWidth;
   let vh = c.offsetHeight;
   let w = c.width;
@@ -689,29 +700,9 @@ function getXY(e) {
       reader.readAsDataURL(file[0]);
 
       reader.addEventListener("load", function(e) {
-        var image = e.target.result;
-
-        var id = get_current_canvas_id();
-
-        var canvas = document.getElementById(id);
-        var ctx = canvas.getContext('2d');
-
-        var img = new Image();
-        img.onload = function() {
-          canvas.width = this.width;
-          canvas.height = this.height;
-          ctx.drawImage(img, 0, 0);
-          parse_image(id);
-          capture_image(id);
-        };
-
-        img.src = image;
-
+        load_image(e.target.result);
       });
-
     });
-
-
   });
 
 })($);
