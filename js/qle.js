@@ -21,36 +21,34 @@ function capture_image(id) {
 }
 
 
-function set_pixel(id, x, y, color) {
+function set_pixel(id, x, y) {
   var canvas = document.getElementById(id);
   var ctx = canvas.getContext('2d');
-}
-
-function bresenham(x0, y0, x1, y1, color) {
-  dx = x1 - x0;
-  dy = y1 - y0;
-  y = y0;
-  d = 0;
-  for (x = x0; x <= x1; x++) {
-    set_pixel(id, x, y, color);
-    d += dy;
-    if (2 * d >= dx) d -= dx, y--;
-  }
-}
-
-function draw_pixel(id, x, y) {
-  var canvas = document.getElementById(id);
-  var ctx = canvas.getContext('2d');
-
-  let capturedImage = undo[id][0];
-
-  let color = !getpixel(x, y, capturedImage);
-
+  let color = !getpixel(x, y, undo[id][0]);
   let r = g = b = color ? 255 : 0;
   let a = 255;
-
   ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + (a / 255) + ")";
   ctx.fillRect(x, y, 1, 1);
+}
+
+function bresenham(id, x0, y0, x1, y1) {
+   var dx = Math.abs(x1 - x0);
+   var dy = Math.abs(y1 - y0);
+   var sx = (x0 < x1) ? 1 : -1;
+   var sy = (y0 < y1) ? 1 : -1;
+   var err = dx - dy;
+
+   while(true) {
+      set_pixel(id, x0, y0);
+      if ((x0 === x1) && (y0 === y1)) break;
+      var e2 = 2*err;
+      if (e2 > -dy) { err -= dy; x0  += sx; }
+      if (e2 < dx) { err += dx; y0  += sy; }
+   }
+}
+
+function draw_pixel(id, x, y, x0, y0) {
+    bresenham(id,x,y,x0,y0);
 }
 
 
@@ -511,17 +509,22 @@ function getXY(e) {
       capture_image(id);
 
       let [x, y] = getXY(e);
-      draw_pixel(id, x, y);
-
+      x0 = x;
+      y0 = y;
+      draw_pixel(id, x, y, x0, y0);
     });
 
     var buttonPressed = 0;
+    var x0 = null;
+    var y0 = null;
 
     $('canvas').mousemove(function(e) {
 
       if (buttonPressed) {
         let [x, y] = getXY(e);
-        draw_pixel(e.target.id, x, y);
+        draw_pixel(e.target.id, x, y, x0, y0);
+        x0 = x;
+        y0 = y;
       }
 
     });
