@@ -10,6 +10,7 @@
     <script crossorigin="anonymous" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script crossorigin="anonymous" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="js/qle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js"></script>
     <title>QMK Logo Editor</title>
   </head>
   <body>
@@ -27,117 +28,115 @@
       </div>
     </nav>
     <div class="container">
-        <nav class="mt-3 mb-2">
-          <div>
-            <div class="row">
-              <div class="col">
-                <div class="nav nav-pills" id="nav-tab" role="tablist">
-                  <a class="nav-item nav-link active" data-toggle="tab" href="#nav-font" id="nav-font-tab" role="tab">Font</a>
-                  <a class="nav-item nav-link" data-toggle="tab" href="#nav-logo" id="nav-logo-tab" role="tab">Logo</a>
-                  <a class="nav-item nav-link" data-toggle="tab" href="#nav-raw" id="nav-raw-tab" role="tab">Raw</a>
-                </div>
+      <nav class="mt-3 mb-2">
+        <div>
+          <div class="row">
+            <div class="col">
+              <div class="nav nav-pills" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" data-toggle="tab" href="#nav-font" id="nav-font-tab" role="tab">Font</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#nav-logo" id="nav-logo-tab" role="tab">Logo</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#nav-raw" id="nav-raw-tab" role="tab">Raw</a>
               </div>
-              <div class="col">
-                <div class="float-right">
-                  <div class="input-group">
-                    <div class="custom-file">
-                      <input class="custom-file-input" id="thumbnail" name="thumbnail" type="file" />
-                      <label class="custom-file-label" for="thumbnail">Upload Image</label>
-                    </div>
-                    <div class="input-group-append">
-                      <button class="btn btn-primary" id="download">Download Image</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col">
-                <div class="float-right">
-                  <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                    <label class="btn btn-secondary active">
-                      <input id="small" name="options" type="radio">Small</input>
-                    </label>
-                    <label class="btn btn-secondary">
-                      <input checked="checked" id="medium" name="options" type="radio">Medium</input>
-                    </label>
-                    <label class="btn btn-secondary">
-                      <input id="large" name="options" type="radio">Large</input>
-                    </label>
+            </div>
+            <div class="col">
+              <div class="float-right">
+                <div class="input-group">
+                  <div class="btn btn-secondary my-file-upload">Upload Image 
+                  <input id="thumbnail" name="thumbnail" type="file" /></div>
+                  <div class="input-group-append">
+                    <button class="btn btn-primary" id="download">Download Image</button>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </nav>
-        <div class="tab-content" id="nav-tabContent">
-          <!--font-->
-          <div class="tab-pane fade show active" id="nav-font" role="tabpanel">
-            <div>
-              <canvas id="canvas_font"></canvas>
-            </div>
-            <div class="row mb-0">
-              <div class="col">
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                  <li class="nav-item">
-                    <a aria-controls="home" aria-selected="true" class="nav-link active" data-toggle="tab" href="#home" id="home-tab" role="tab">Export</a>
-                  </li>
-                  <li class="nav-item">
-                    <a aria-controls="profile" aria-selected="false" class="nav-link" data-toggle="tab" href="#profile" id="profile-tab" role="tab">Raw data</a>
-                  </li>
-                  <li class="nav-item dropdown">
-                    <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button">Examples</a>
-                    <div class="dropdown-menu" id="examples">
-                      <a class="dropdown-item" href="#">keyboards/helix/common</a>
-                      <a class="dropdown-item" href="#">keyboards/crkbd/lib</a>
-                      <a class="dropdown-item" href="#">keyboards/yosino58/lib</a>
-                      <a class="dropdown-item" href="#">keyboards/lily58/lib</a>
-                      <a class="dropdown-item" href="#">keyboards/claw44/lib</a>
-                      <a class="dropdown-item" href="#">keyboards/comet46/lib</a>
-                      <a class="dropdown-item" href="#">keyboards/treadstone48/common</a>
-                      <a class="dropdown-item" href="#">keyboards/rgbkb/sol/common</a>
-                      <a class="dropdown-item" href="#">keyboards/rgbkb/zen/common</a>
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="#">drivers/oled</a>
-                      <a class="dropdown-item" href="#">drivers/avr</a>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-              <div class="col">
-                <div class="float-right form-inline">
-                  <div class="mr-2">Font Width</div>
-                  <input class="form-control mr-1" id="fw" max="256" min="1" size="1" type="number" value="6" />
-                  <div class="ml-2 mr-2">Font Height</div>
-                  <input class="form-control" id="fh" max="256" min="8" size="1" step="8" type="number" value="8" />
+            <!--div class="col">
+              <div class="float-right">
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                  <label class="btn btn-secondary active">
+                    <input id="small" name="options" type="radio">Small</input>
+                  </label>
+                  <label class="btn btn-secondary">
+                    <input checked="checked" id="medium" name="options" type="radio">Medium</input>
+                  </label>
+                  <label class="btn btn-secondary">
+                    <input id="large" name="options" type="radio">Large</input>
+                  </label>
                 </div>
               </div>
-            </div>
-            <div class="tab-content" id="myTabContent">
-              <div class="tab-pane fade show active" id="home" role="tabpanel">
-                <textarea autofocus="autofocus" class="form-control" id="font" rows="12" wrap="off"></textarea>
-              </div>
-              <div class="tab-pane fade" id="profile" role="tabpanel">
-                <textarea class="form-control" id="dec" rows="10" wrap="on"></textarea>
-              </div>
-            </div>
-            <div class="mt-1" id="hint_font"></div>
-          </div>
-          <!--logo-->
-          <div class="tab-pane fade" id="nav-logo" role="tabpanel">
-            <div>
-              <canvas id="canvas_logo"></canvas>
-            </div>
-            <textarea class="form-control" id="logo" rows="10" wrap="off"></textarea>
-            <div class="mt-1" id="hint_logo"></div>
-          </div>
-          <!--raw-->
-          <div class="tab-pane fade" id="nav-raw" role="tabpanel">
-            <div>
-              <canvas id="canvas_raw"></canvas>
-            </div>
-            <textarea class="form-control" id="raw" rows="12" wrap="off"></textarea>
-            <div class="mt-1" id="hint_raw"></div>
+            </div-->
           </div>
         </div>
+      </nav>
+      <div class="tab-content" id="nav-tabContent">
+        <!--font-->
+        <div class="tab-pane fade show active" id="nav-font" role="tabpanel">
+          <div>
+            <canvas id="canvas_font"></canvas>
+          </div>
+          <div class="row mb-0">
+            <div class="col">
+              <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                  <a aria-controls="home" aria-selected="true" class="nav-link active" data-toggle="tab" href="#home" id="home-tab" role="tab">Export</a>
+                </li>
+                <li class="nav-item">
+                  <a aria-controls="profile" aria-selected="false" class="nav-link" data-toggle="tab" href="#profile" id="profile-tab" role="tab">Raw data</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button">Examples</a>
+                  <div class="dropdown-menu" id="examples">
+                    <a class="dropdown-item" href="#">keyboards/helix/common</a>
+                    <a class="dropdown-item" href="#">keyboards/crkbd/lib</a>
+                    <a class="dropdown-item" href="#">keyboards/yosino58/lib</a>
+                    <a class="dropdown-item" href="#">keyboards/lily58/lib</a>
+                    <a class="dropdown-item" href="#">keyboards/claw44/lib</a>
+                    <a class="dropdown-item" href="#">keyboards/comet46/lib</a>
+                    <a class="dropdown-item" href="#">keyboards/treadstone48/common</a>
+                    <a class="dropdown-item" href="#">keyboards/rgbkb/sol/common</a>
+                    <a class="dropdown-item" href="#">keyboards/rgbkb/zen/common</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">drivers/oled</a>
+                    <a class="dropdown-item" href="#">drivers/avr</a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="col">
+              <div class="float-right form-inline">
+                <div class="mr-2">Font Width</div>
+                <input class="form-control mr-1" id="fw" max="256" min="1" size="1" type="number" value="6" />
+                <div class="ml-2 mr-2">Font Height</div>
+                <input class="form-control" id="fh" max="256" min="8" size="1" step="8" type="number" value="8" />
+              </div>
+            </div>
+          </div>
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="home" role="tabpanel">
+              <textarea autofocus="autofocus" class="form-control" id="font" rows="12" wrap="off"></textarea>
+            </div>
+            <div class="tab-pane fade" id="profile" role="tabpanel">
+              <textarea class="form-control" id="dec" rows="10" wrap="on"></textarea>
+            </div>
+          </div>
+          <div class="mt-1" id="hint_font"></div>
+        </div>
+        <!--logo-->
+        <div class="tab-pane fade" id="nav-logo" role="tabpanel">
+          <div>
+            <canvas id="canvas_logo"></canvas>
+          </div>
+          <textarea class="form-control" id="logo" rows="10" wrap="off"></textarea>
+          <div class="mt-1" id="hint_logo"></div>
+        </div>
+        <!--raw-->
+        <div class="tab-pane fade" id="nav-raw" role="tabpanel">
+          <div>
+            <canvas id="canvas_raw"></canvas>
+          </div>
+          <textarea class="form-control" id="raw" rows="12" wrap="off"></textarea>
+          <div class="mt-1" id="hint_raw"></div>
+        </div>
+      </div>
     </div>
     <a aria-label="View source on Github" class="github-corner" href="https://github.com/joric/qle">
       <svg viewbox="0 0 250 250">

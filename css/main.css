@@ -28,5 +28,18 @@ canvas {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   background: black;
+  width: 100%;
+}
+
+.my-file-upload{
+  position: relative;
+  overflow: hidden;
+}
+.my-file-upload input {
+  position: absolute;
+  font-size: 50px;
+  opacity: 0;
+  right: 0;
+  top: 0;
 }
 

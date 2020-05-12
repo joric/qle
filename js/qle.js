@@ -569,9 +569,10 @@ function getXY(e) {
       var dt = canvas.toDataURL('image/png');
       dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
       dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=Canvas.png');
+      var filename = id + '.png';
       var a = document.body.appendChild(document.createElement("a"));
       a.href = dt;
-      a.download = id + '.png';
+      a.download = filename;
       a.click();
       a.remove();
     });
