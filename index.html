@@ -31,11 +31,26 @@
       <nav class="mt-3 mb-2">
         <div>
           <div class="row">
-            <div class="col">
+            <div class="col-4">
               <div class="nav nav-pills" id="nav-tab" role="tablist">
                 <a class="nav-item nav-link active" data-toggle="tab" href="#nav-font" id="nav-font-tab" role="tab">Font</a>
                 <a class="nav-item nav-link" data-toggle="tab" href="#nav-logo" id="nav-logo-tab" role="tab">Logo</a>
                 <a class="nav-item nav-link" data-toggle="tab" href="#nav-raw" id="nav-raw-tab" role="tab">Raw</a>
+              </div>
+            </div>
+            <div class="col-3">
+              <div>
+                <div class="btn-group btn-group-toggle ml-4" data-toggle="buttons">
+                  <label class="btn btn-secondary active">
+                    <input id="small" name="options" type="radio">Small</input>
+                  </label>
+                  <label class="btn btn-secondary">
+                    <input id="medium" name="options" type="radio">Medium</input>
+                  </label>
+                  <label class="btn btn-secondary">
+                    <input checked="checked" id="large" name="options" type="radio">Large</input>
+                  </label>
+                </div>
               </div>
             </div>
             <div class="col">
@@ -49,21 +64,6 @@
                 </div>
               </div>
             </div>
-            <!--div class="col">
-              <div class="float-right">
-                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                  <label class="btn btn-secondary active">
-                    <input id="small" name="options" type="radio">Small</input>
-                  </label>
-                  <label class="btn btn-secondary">
-                    <input checked="checked" id="medium" name="options" type="radio">Medium</input>
-                  </label>
-                  <label class="btn btn-secondary">
-                    <input id="large" name="options" type="radio">Large</input>
-                  </label>
-                </div>
-              </div>
-            </div-->
           </div>
         </div>
       </nav>

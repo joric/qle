@@ -476,7 +476,7 @@ function getXY(e) {
     });
 
     //$('#nav-raw-tab').click();
-    $('#large').click();
+    //$('#large').click();
 
     $('#fw,#fh').on('input', function(e) {
       let [font, fw, fh] = load_current_font();
