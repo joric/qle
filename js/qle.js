@@ -4,6 +4,11 @@ undo = {
   'canvas_raw': []
 };
 
+function get_current_canvas_id() {
+  var tab = $("#nav-tab a.active")[0].id;
+  return tab == 'nav-font-tab' ? "canvas_font" : (tab == 'nav-logo-tab' ? 'canvas_logo' : 'canvas_raw');
+}
+
 function capture_image(id) {
   var canvas = document.getElementById(id);
   var ctx = canvas.getContext('2d');
@@ -179,9 +184,8 @@ function parse_image(canvas_id) {
 
 
 window.addEventListener("paste", function(e) {
-  var tab = $("#nav-tab a.active")[0].id;
-  if (tab == "nav-logo-tab") return;
-  var canvas_id = tab == "nav-font-tab" ? "canvas_font" : "canvas_raw";
+  var canvas_id = get_current_canvas_id();
+  if (canvas_id == 'canvas_logo') return;
 
   retrieveImageFromClipboardAsBlob(e, function(imageBlob) {
     if (imageBlob) {
@@ -534,9 +538,7 @@ function getXY(e) {
 
     $("body").keydown(function(e) {
 
-      var tab = $("#nav-tab a.active")[0].id;
-
-      var id = tab == 'nav-font-tab' ? "canvas_font" : (tab == 'nav-logo-tab' ? 'canvas_logo' : 'canvas_raw');
+      var id = get_current_canvas_id()
 
       if (undo[id].length == 0) return;
 
@@ -557,6 +559,48 @@ function getXY(e) {
           parse_image(id);
         }
       }
+
+    });
+
+    $('#download').on('click', function(e) {
+      var id = get_current_canvas_id();
+      var canvas = document.getElementById(id);
+      var ctx = canvas.getContext('2d');
+      var dt = canvas.toDataURL('image/png');
+      dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
+      dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=Canvas.png');
+      var a = document.body.appendChild(document.createElement("a"));
+      a.href = dt;
+      a.download = id + '.png';
+      a.click();
+      a.remove();
+    });
+
+    $('#thumbnail').on('change', function() {
+      var file = $(this).get(0).files;
+      var reader = new FileReader();
+      reader.readAsDataURL(file[0]);
+
+      reader.addEventListener("load", function(e) {
+        var image = e.target.result;
+
+        var id = get_current_canvas_id();
+
+        var canvas = document.getElementById(id);
+        var ctx = canvas.getContext('2d');
+
+        var img = new Image();
+        img.onload = function() {
+          canvas.width = this.width;
+          canvas.height = this.height;
+          ctx.drawImage(img, 0, 0);
+          parse_image(id);
+          capture_image(id);
+        };
+
+        img.src = image;
+
+      });
 
     });
 
