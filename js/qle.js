@@ -59,7 +59,7 @@ function update_hint(id, len, fw, fh, w, h) {
   let im = w + 'x' + h + ' image';
   let ff = fw + 'x' + fh + ' font';
   let ch = ~~(len / fw) + ' characters';
-  let cc = ~~(w / fw) + 'x' + ~~(h / fh) + ' characters';
+  let cc = ~~(w / fw) + ' columns, ' + ~~(h / fh) + ' rows';
   let bp = fw + ' bytes per character';
   let e = $('#' + id);
 
