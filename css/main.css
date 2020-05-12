@@ -24,21 +24,32 @@ textarea {
 font-family: monospace;
 }
 
-canvas {
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  background: black;
-}
-
 .my-file-upload{
   position: relative;
   overflow: hidden;
 }
+
 .my-file-upload input {
   position: absolute;
   font-size: 50px;
   opacity: 0;
   right: 0;
   top: 0;
+}
+
+.canvas-container {
+  position: relative;
+}
+
+canvas {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  background: black;
+}
+
+.grid-container {
+  position: absolute;
+  top: 0; left: 0;
+  pointer-events: none;
 }
 

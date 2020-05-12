@@ -39,7 +39,7 @@
             </div>
             <div class="col">
               <div class="float-right">
-                <div id="scale" class="btn-group btn-group-toggle" data-toggle="buttons">
+                <div class="btn-group btn-group-toggle" data-toggle="buttons" id="scale">
                   <label class="btn btn-secondary active">
                     <input id="small" name="scale" type="radio">Small</input>
                   </label>
@@ -52,21 +52,14 @@
                 </div>
               </div>
             </div>
-
-
             <div class="col">
               <div class="float-right mr-2">
-
-<div class="btn-group" role="group">
-  <button id="undo" type="button" class="btn btn-secondary">Undo</button>
-  <button id="redo" type="button" class="btn btn-primary">Redo</button>
-</div>
-
-
+                <div class="btn-group" role="group">
+                  <button class="btn btn-secondary" id="undo" type="button">Undo</button>
+                  <button class="btn btn-primary" id="redo" type="button">Redo</button>
+                </div>
               </div>
             </div>
-
-
             <div class="col-4">
               <div class="float-right">
                 <div class="input-group">
@@ -84,8 +77,9 @@
       <div class="tab-content" id="nav-tabContent">
         <!--font-->
         <div class="tab-pane fade show active" id="nav-font" role="tabpanel">
-          <div>
+          <div class="canvas-container">
             <canvas id="canvas_font"></canvas>
+            <div class="grid-container"></div>
           </div>
           <div class="row mb-0">
             <div class="col">
@@ -136,8 +130,9 @@
         </div>
         <!--logo-->
         <div class="tab-pane fade" id="nav-logo" role="tabpanel">
-          <div>
+          <div class="canvas-container">
             <canvas id="canvas_logo"></canvas>
+            <div class="grid-container"></div>
           </div>
           <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
@@ -154,14 +149,14 @@
               </div>
             </li>
           </ul>
-
           <textarea class="form-control" id="logo" rows="10" wrap="off"></textarea>
           <div class="mt-1" id="hint_logo"></div>
         </div>
         <!--raw-->
         <div class="tab-pane fade" id="nav-raw" role="tabpanel">
-          <div>
+          <div class="canvas-container">
             <canvas id="canvas_raw"></canvas>
+            <div class="grid-container"></div>
           </div>
           <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
@@ -188,6 +183,5 @@
       </svg>
     </a>
     <footer class="page-footer font-small pt-4"></footer>
-
   </body>
 </html>

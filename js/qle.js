@@ -4,17 +4,46 @@ hist = {
   'canvas_raw': []
 };
 
+
 function scale_all() {
   var tab = $("input[name='scale']:checked");
   //console.log(tab.attr('id'));
   let size = tab.attr('id');
+
+  sizes = {
+    'small': 1,
+    'medium': 5,
+    'large': 16
+  };
+
   for (c of $('canvas')) {
-    if (size == 'medium')
-      $(c).css('width', c.width * 5.77);
-    else if (size == 'large')
-      $(c).css('width', c.width * 16);
-    else
-      $(c).css('width', 'auto');
+    let g = sizes[size];
+    $(c).css('width', c.width * g);
+    let id = c.id;
+    let div = $('#' + id + '+.grid-container')[0];
+    let [_,fw,fh] = load_current_font();
+    let w = g*fw;
+    let h = g*fh;
+    let cw = c.width * g;
+    let ch = c.height * g;
+
+let s =''
++'<svg width="'+cw+'" height="'+ch+'" xmlns="http://www.w3.org/2000/svg">'
++'  <defs>'
++'    <pattern id="smallGrid" width="'+g+'" height="'+g+'" patternUnits="userSpaceOnUse">'
++'      <path d="M '+g+' 0 L 0 0 0 '+g+'" fill="none" stroke="gray" stroke-width="0.5"/>'
++'    </pattern>'
++'    <pattern id="grid" width="'+w+'" height="'+h+'" patternUnits="userSpaceOnUse">'
++ (size!='medium' ? ('      <rect width="'+w+'" height="'+h+'" fill="url(#smallGrid)"/>') : '')
++'      <path d="M '+w+' 0 L 0 0 0 '+h+'" fill="none" stroke="gray" stroke-width="1"/>'
++'    </pattern>'
++'  </defs>'
++'  <rect width="100%" height="100%" fill="url(#grid)" />'
++'</svg>';
+
+      div.innerHTML = g!=1 ? s : '';
+
+      // grids adds fine on all tabs, I don't know why it's showing only on the font tab. css issues?
   }
 }
 
@@ -437,12 +466,13 @@ function parse_text(text, is_font) {
 }
 
 function getXY(e) {
-  let x = e.pageX - e.target.offsetLeft;
-  let y = e.pageY - e.target.offsetTop;
-  let vw = e.target.offsetWidth;
-  let vh = e.target.offsetHeight;
-  let w = e.target.width;
-  let h = e.target.height;
+  let c = e.target;
+  let x = e.offsetX;//e.pageX - c.offsetLeft;
+  let y = e.offsetY;//e.pageY - c.offsetTop;
+  let vw = c.offsetWidth;
+  let vh = c.offsetHeight;
+  let w = c.width;
+  let h = c.height;
   x = Math.floor(x * w / vw);
   y = Math.floor(y * h / vh);
   return [x, y];
