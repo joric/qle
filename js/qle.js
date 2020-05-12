@@ -4,6 +4,8 @@ hist = {
   'canvas_raw': []
 };
 
+var hist_pos = 0;
+
 function get_current_canvas_id() {
   var tab = $("#nav-tab a.active")[0].id;
   return tab == 'nav-font-tab' ? "canvas_font" : (tab == 'nav-logo-tab' ? 'canvas_logo' : 'canvas_raw');
@@ -139,7 +141,7 @@ function parse_image(canvas_id) {
   var h = canvas.height;
   var imageData = ctx.getImageData(0, 0, w, h);
 
-  var data = [];
+  let data = [];
   lines = ~~(h / 8);
   for (var line = 0; line < lines; line++) {
     for (var x = 0; x < w; x++) {
@@ -166,19 +168,18 @@ function parse_image(canvas_id) {
     // account for characters location
     let [font, fw, fh] = load_current_font();
     let chars = parse_text($('#logo').val()).data;
-    chars.pop(); // remove z-termination
-    for (let i = 0; i < chars.length; i++) {
-      let cols = ~~(w / fw);
-      let x = ~~((i % cols) * fw);
-      let y = ~~((i * fw) / w);
-      let logo_ofs = x + (y * w);
-      let font_ofs = ~~(chars[i] * fw);
+
+    oled_write_P(chars, fw, fh, function(ch, x, y) {
+      let logo_ofs = x + (~~(y / 8) * w);
+      let font_ofs = ~~(ch * fw);
+
       for (let k = 0; k < fw; k++) {
         font[font_ofs + k] = data[logo_ofs + k];
       }
-    }
 
-    render_font(font, fw, fh)
+    });
+
+    render_font(font, fw, fh);
     export_font(font, fw, fh);
 
   } else {
@@ -251,7 +252,7 @@ function putchar(i, x, y, data, fw, fh, imageData, w, h) {
   }
 }
 
-function render_image(ctrl, chars, font, fw, fh, w, h) {
+function render_image(ctrl, chars, font, fw, fh, w, h, is_raw) {
   var canvas = document.getElementById(ctrl);
   var ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -268,14 +269,16 @@ function render_image(ctrl, chars, font, fw, fh, w, h) {
 
   cols = ~~(w / fw);
 
-  for (i of chars) {
+  for (ch of chars) {
+    if (!is_raw && (ch == 0 || ch == 10 || ch == 13))
+      continue;
 
     if (x >= cols * fw) {
       x = 0;
       y += fh;
     }
 
-    putchar(i, x, y, font, fw, fh, imageData, w, h);
+    putchar(ch, x, y, font, fw, fh, imageData, w, h);
     x += fw;
   }
 
@@ -294,7 +297,7 @@ function render_raw(ctrl, data) {
   var h = ~~(data.length / cols);
   let total = ~~(font.length / fw);
   let chars = [...Array(total).keys()];
-  render_image(ctrl, chars, font, fw, fh, w, h);
+  render_image(ctrl, chars, font, fw, fh, w, h, true);
   update_hint('hint_raw', data.length, fw, fh, w, h);
 }
 
@@ -302,12 +305,33 @@ function parse_raw_file(text) {
   render_raw("canvas_raw", parse_text(text).data);
 }
 
+function oled_write_P(chars, fw, fh, callback) {
+  let x = 0;
+  let y = 0;
+  let w = 0;
+  let h = 0;
+  let maxw = 128;
+  for (ch of chars) {
+    if (ch == 10 || ch == 13) {
+      y += fh;
+      x = 0;
+    } else if (ch != 0) {
+      if (x + fw > maxw) {
+        y += fh;
+        x = 0;
+      }
+      if (callback)
+        callback(ch, x, y);
+      x += fw;
+    }
+    if (x > w) w = x;
+    if (y + fh > h) h = y + fh;
+  }
+  return [w, h];
+}
+
 function render_logo(chars, font, fw, fh) {
-  chars.pop();
-  let w = 128;
-  let wrap = ~~(w / fw);
-  let h = Math.ceil(chars.length / wrap) * fh;
-  if (h == 0) h = fh;
+  let [w, h] = oled_write_P(chars, fw, fh);
   render_image("canvas_logo", chars, font, fw, fh, w, h);
   update_hint('hint_logo', chars.length, fw, fh, w, h);
 }
@@ -324,7 +348,7 @@ function render_font(font, fw, fh) {
   let h = fh * ~~(total / 32);
   update_hint('hint_font', font.length, fw, fh, w, h);
   let chars = [...Array(total).keys()];
-  render_image("canvas_font", chars, font, fw, fh, w, h);
+  render_image("canvas_font", chars, font, fw, fh, w, h, true);
 }
 
 function parse_text(text, is_font) {
@@ -424,12 +448,12 @@ function getXY(e) {
   }
 
 
-  function load_font_file(url, update_logo, load_logo) {
+  function load_font_file(url, update_logo, logo_file) {
     $('#font').load(url, function(text) {
       $('#font').val(text);
       parse_font_file(text);
-      if (load_logo)
-        load_logo_file(load_logo);
+      if (logo_file)
+        load_logo_file(logo_file);
       if (update_logo)
         parse_logo_file($('#logo').val());
     });
@@ -483,6 +507,10 @@ function getXY(e) {
 
     $('#examples_raw a').on('click', function(e) {
       load_raw_file(e.target.text);
+    });
+
+    $('#examples_logo a').on('click', function(e) {
+      load_logo_file(e.target.text);
     });
 
 
@@ -571,6 +599,9 @@ function getXY(e) {
 
     $('#undo').on('click', undo);
     $('#redo').on('click', redo);
+
+    //$('#undo').prop('disabled', true);
+    //$('#redo').prop('disabled', true);
 
     $("body").keydown(function(e) {
       if ($('textarea').is(':focus')) return;
