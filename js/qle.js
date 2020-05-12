@@ -10,9 +10,9 @@ function scale_all() {
   let size = tab.attr('id');
   for (c of $('canvas')) {
     if (size == 'medium')
-      $(c).css('width', c.width*5.77);
+      $(c).css('width', c.width * 5.77);
     else if (size == 'large')
-      $(c).css('width', c.width*16);
+      $(c).css('width', c.width * 16);
     else
       $(c).css('width', 'auto');
   }
@@ -589,6 +589,25 @@ function getXY(e) {
       }
 
     });
+
+    /*
+        $('canvas').bind('mousewheel',function(e){
+          console.log(e);
+            if(e.originalEvent.wheelDelta /120 > 0) {
+                console.log('scrolling up !');
+            }
+            else{
+                console.log('scrolling down !');
+            }
+          return false;
+        });
+
+    $('img').bind('contextmenu', function(e){
+       // handle right click
+        return false;
+    }); 
+
+    */
 
     $('canvas').mouseup(function(e) {
 
