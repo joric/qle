@@ -311,6 +311,9 @@ function render_image(ctrl, chars, font, fw, fh, w, h, is_raw) {
   canvas.width = w;
   canvas.height = h;
 
+  // remove grid
+  $('#' + ctrl + '+.grid-container')[0].innerHTML = '';
+
   if (w == 0 || h == 0) return;
 
   var imageData = ctx.createImageData(w, h);
