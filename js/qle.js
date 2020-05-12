@@ -456,9 +456,13 @@ function getXY(e) {
       load_font_file(url, true);
     });
 
+    $('#examples_raw a').on('click', function(e) {
+      load_raw_file(e.target.text);
+    });
 
-    load_font_file('files/glcdfont.c', true, 'files/logo.c');
-    load_raw_file('files/raw.c');
+
+    load_font_file('files/glcdfont.c', true, 'files/logo_reader.c');
+    load_raw_file('files/jorne_raw.c');
 
 
     $('#small').on('click', function(e) {
