@@ -115,6 +115,13 @@ function getpixel(x, y, imageData) {
 }
 
 
+function getchpos(i, w, h, fw, fh) {
+  let x = ~~((i * fw) % w);
+  let y = ~~((i * fw) / w) * fh;
+  return [x, y];
+}
+
+
 function parse_image(canvas_id) {
   var canvas = document.getElementById(canvas_id);
   var ctx = canvas.getContext('2d');
@@ -137,13 +144,37 @@ function parse_image(canvas_id) {
   }
 
   if (canvas_id == "canvas_font") {
-
     let [_, fw, fh] = load_current_font();
-    export_font(data, fw, fh, w, h);
+    export_font(data, fw, fh);
+
+    // update logo picture accordingly
     parse_logo_file($('#logo').val());
 
-  } else
+  } else if (canvas_id == "canvas_logo") {
+
+    // replace font image data with logo image data
+    // account for characters location
+    let [font, fw, fh] = load_current_font();
+    let chars = parse_text($('#logo').val()).data;
+    chars.pop(); // remove z-termination
+    for (let i = 0; i < chars.length; i++) {
+      let cols = ~~(w / fw);
+      let x = ~~((i % cols) * fw);
+      let y = ~~((i * fw) / w);
+      let logo_ofs = x + (y * w);
+      let font_ofs = ~~(chars[i] * fw);
+      for (let k = 0; k < fw; k++) {
+        font[font_ofs + k] = data[logo_ofs + k];
+      }
+    }
+
+    render_font(font, fw, fh)
+    export_font(font, fw, fh);
+
+  } else {
+
     export_raw(data, 8, 8, w, h);
+  }
 }
 
 
@@ -162,7 +193,6 @@ window.addEventListener("paste", function(e) {
         canvas.height = this.height;
         ctx.drawImage(img, 0, 0);
         parse_image(canvas_id);
-        undo[canvas_id] = [];
         capture_image(canvas_id);
       };
       var URLObj = window.URL || window.webkitURL;
@@ -267,7 +297,8 @@ function render_logo(chars, font, fw, fh) {
   chars.pop();
   let w = 128;
   let wrap = ~~(w / fw);
-  let h = ~~(chars.length / wrap) * fh;
+  let h = Math.ceil(chars.length / wrap) * fh;
+  if (h == 0) h = fh;
   render_image("canvas_logo", chars, font, fw, fh, w, h);
   update_hint('hint_logo', chars.length, fw, fh, w, h);
 }
@@ -463,14 +494,9 @@ function getXY(e) {
       parse_raw_file(e.target.value);
     });
 
-    var buttonPressed = 0;
-
     $('canvas').mousedown(function(e) {
 
       let id = e.target.id;
-
-      if (id == 'canvas_logo') return;
-
       buttonPressed = e.button == 0;
       if (!buttonPressed) return;
 
@@ -480,6 +506,8 @@ function getXY(e) {
       draw_pixel(id, x, y);
 
     });
+
+    var buttonPressed = 0;
 
     $('canvas').mousemove(function(e) {
 
@@ -495,7 +523,6 @@ function getXY(e) {
       let id = e.target.id;
 
       if (e.button == 0) {
-
         undo[id].shift();
         capture_image(id);
         parse_image(id);
@@ -508,11 +535,10 @@ function getXY(e) {
     $("body").keydown(function(e) {
 
       var tab = $("#nav-tab a.active")[0].id;
-      if (tab == "nav-logo-tab") return;
-      var id = tab == "nav-font-tab" ? "canvas_font" : "canvas_raw";
+
+      var id = tab == 'nav-font-tab' ? "canvas_font" : (tab == 'nav-logo-tab' ? 'canvas_logo' : 'canvas_raw');
 
       if (undo[id].length == 0) return;
-
 
       if (e.ctrlKey || e.metaKey) {
 
