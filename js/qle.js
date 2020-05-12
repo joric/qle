@@ -1,4 +1,4 @@
-undo = {
+hist = {
   'canvas_font': [],
   'canvas_logo': [],
   'canvas_raw': []
@@ -14,17 +14,18 @@ function capture_image(id) {
   var ctx = canvas.getContext('2d');
   capturedImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-  if (undo[id].length > 1000)
-    undo[id].pop();
 
-  undo[id].unshift(capturedImage);
+  if (hist[id].length > 1000)
+    hist[id].pop();
+
+  hist[id].unshift(capturedImage);
 }
 
 
 function set_pixel(id, x, y) {
   var canvas = document.getElementById(id);
   var ctx = canvas.getContext('2d');
-  let color = !getpixel(x, y, undo[id][0]);
+  let color = !getpixel(x, y, hist[id][0]);
   let r = g = b = color ? 255 : 0;
   let a = 255;
   ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + (a / 255) + ")";
@@ -32,23 +33,29 @@ function set_pixel(id, x, y) {
 }
 
 function bresenham(id, x0, y0, x1, y1) {
-   var dx = Math.abs(x1 - x0);
-   var dy = Math.abs(y1 - y0);
-   var sx = (x0 < x1) ? 1 : -1;
-   var sy = (y0 < y1) ? 1 : -1;
-   var err = dx - dy;
+  var dx = Math.abs(x1 - x0);
+  var dy = Math.abs(y1 - y0);
+  var sx = (x0 < x1) ? 1 : -1;
+  var sy = (y0 < y1) ? 1 : -1;
+  var err = dx - dy;
 
-   while(true) {
-      set_pixel(id, x0, y0);
-      if ((x0 === x1) && (y0 === y1)) break;
-      var e2 = 2*err;
-      if (e2 > -dy) { err -= dy; x0  += sx; }
-      if (e2 < dx) { err += dx; y0  += sy; }
-   }
+  while (true) {
+    set_pixel(id, x0, y0);
+    if ((x0 === x1) && (y0 === y1)) break;
+    var e2 = 2 * err;
+    if (e2 > -dy) {
+      err -= dy;
+      x0 += sx;
+    }
+    if (e2 < dx) {
+      err += dx;
+      y0 += sy;
+    }
+  }
 }
 
 function draw_pixel(id, x, y, x0, y0) {
-    bresenham(id,x,y,x0,y0);
+  bresenham(id, x, y, x0, y0);
 }
 
 
@@ -447,6 +454,26 @@ function getXY(e) {
     return arr;
   }
 
+  function undo() {
+    var id = get_current_canvas_id()
+    if (hist[id].length == 0) return;
+    var canvas = document.getElementById(id);
+    var ctx = canvas.getContext('2d');
+    arrayRotate(hist[id], false);
+    ctx.putImageData(hist[id][0], 0, 0);
+    parse_image(id);
+  }
+
+  function redo() {
+    var id = get_current_canvas_id()
+    if (hist[id].length == 0) return;
+    var canvas = document.getElementById(id);
+    var ctx = canvas.getContext('2d');
+    arrayRotate(hist[id], true);
+    ctx.putImageData(hist[id][0], 0, 0);
+    parse_image(id);
+  }
+
   $(document).ready(function() {
 
     $('#examples a').on('click', function(e) {
@@ -534,7 +561,7 @@ function getXY(e) {
       let id = e.target.id;
 
       if (e.button == 0) {
-        undo[id].shift();
+        hist[id].shift();
         capture_image(id);
         parse_image(id);
       }
@@ -542,33 +569,17 @@ function getXY(e) {
       buttonPressed = 0;
     });
 
+    $('#undo').on('click', undo);
+    $('#redo').on('click', redo);
 
     $("body").keydown(function(e) {
-
       if ($('textarea').is(':focus')) return;
-
-      var id = get_current_canvas_id()
-
-      if (undo[id].length == 0) return;
-
       if (e.ctrlKey || e.metaKey) {
-
-        var canvas = document.getElementById(id);
-        var ctx = canvas.getContext('2d');
-
-        if (e.keyCode == 89) { //Ctrl+Y
-          arrayRotate(undo[id], true);
-          ctx.putImageData(undo[id][0], 0, 0);
-          parse_image(id);
-        }
-
-        if (e.keyCode == 90) { //Ctrl+Z
-          arrayRotate(undo[id], false);
-          ctx.putImageData(undo[id][0], 0, 0);
-          parse_image(id);
-        }
+        if (e.keyCode == 90)
+          undo();
+        if (e.keyCode == 89)
+          redo();
       }
-
     });
 
     $('#download').on('click', function(e) {
