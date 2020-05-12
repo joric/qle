@@ -542,6 +542,8 @@ function getXY(e) {
 
     $("body").keydown(function(e) {
 
+      if ($('textarea').is(':focus')) return;
+
       var id = get_current_canvas_id()
 
       if (undo[id].length == 0) return;
