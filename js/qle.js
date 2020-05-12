@@ -4,7 +4,19 @@ hist = {
   'canvas_raw': []
 };
 
-var hist_pos = 0;
+function scale_all() {
+  var tab = $("input[name='scale']:checked");
+  //console.log(tab.attr('id'));
+  let size = tab.attr('id');
+  for (c of $('canvas')) {
+    if (size == 'medium')
+      $(c).css('width', c.width*5.77);
+    else if (size == 'large')
+      $(c).css('width', c.width*16);
+    else
+      $(c).css('width', 'auto');
+  }
+}
 
 function get_current_canvas_id() {
   var tab = $("#nav-tab a.active")[0].id;
@@ -15,7 +27,6 @@ function capture_image(id) {
   var canvas = document.getElementById(id);
   var ctx = canvas.getContext('2d');
   capturedImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
 
   if (hist[id].length > 1000)
     hist[id].pop();
@@ -284,6 +295,8 @@ function render_image(ctrl, chars, font, fw, fh, w, h, is_raw) {
 
   ctx.putImageData(imageData, 0, 0);
 
+  scale_all();
+
   capture_image(ctrl);
 }
 
@@ -517,19 +530,12 @@ function getXY(e) {
     load_font_file('files/glcdfont.c', true, 'files/logo_reader.c');
     load_raw_file('files/jorne_raw.c');
 
-
-    $('#small').on('click', function(e) {
-      $('canvas').css('width', 'auto');
-    });
-    $('#medium').on('click', function(e) {
-      $('canvas').css('width', '50%');
-    });
-    $('#large').on('click', function(e) {
-      $('canvas').css('width', '100%');
+    $('#scale').on('change', function(e) {
+      scale_all();
     });
 
-    //$('#nav-raw-tab').click();
-    //$('#large').click();
+    $('#font').focus();
+
 
     $('#fw,#fh').on('input', function(e) {
       let [font, fw, fh] = load_current_font();

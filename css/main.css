@@ -28,7 +28,6 @@ canvas {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   background: black;
-  width: 100%;
 }
 
 .my-file-upload{
