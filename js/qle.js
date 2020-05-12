@@ -168,8 +168,8 @@ function parse_image(canvas_id) {
 
   if (canvas_id == "canvas_font") {
     let [_, fw, fh] = load_current_font();
-    export_font(data, fw, fh);
-
+    let font = data;
+    export_font(font, fw, fh);
     // update logo picture accordingly
     parse_logo_file($('#logo').val());
 
@@ -451,24 +451,24 @@ function getXY(e) {
 
 (function($) {
 
-  function parse_font_file(text) {
+  function parse_font_file(text, update_logo, logo_file) {
     let res = parse_text(text, true);
-    $('#dec').text(res.data.join(','));
+    $('#dec').val(res.data.join(','));
     $('#fw').val(res.fw);
     $('#fh').val(res.fh);
     render_font(res.data, res.fw, res.fh);
+
+    if (logo_file)
+      load_logo_file(logo_file);
+    else if (update_logo)
+      parse_logo_file($('#logo').val());
+
     return res;
   }
 
-
   function load_font_file(url, update_logo, logo_file) {
     $('#font').load(url, function(text) {
-      $('#font').val(text);
-      parse_font_file(text);
-      if (logo_file)
-        load_logo_file(logo_file);
-      if (update_logo)
-        parse_logo_file($('#logo').val());
+      parse_font_file(text, update_logo, logo_file);
     });
   }
 
