@@ -27,9 +27,7 @@ function load_image(src) {
 }
 
 function scale_all() {
-  var tab = $("input[name='scale']:checked");
-  //console.log(tab.attr('id'));
-  let size = tab.attr('id');
+  let size = $("input[name='scale']:checked").attr('id');
 
   sizes = {
     'small': 1,
@@ -632,6 +630,7 @@ function getXY(e) {
 
     $('canvas').mouseout(function(e) {
       $('#canvas_font_hint').text('');
+      $('canvas').prop('title', '');
     });
 
     $('canvas').mousemove(function(e) {
@@ -644,7 +643,12 @@ function getXY(e) {
         let row = ~~(y / fh);
         // consider there are always 32 columns
         let ch = 32 * row + col;
-        $('#'+id).prop('title', toHex(ch)+'\n('+ch+')');
+
+        let size = $("input[name='scale']:checked").attr('id');
+
+        if (size == 'medium')
+          $('#'+id).prop('title', toHex(ch)+'\n('+ch+')');
+
         //$('#canvas_font_hint').text('Symbol '+toHex(ch)+'('+ch+')');
       }
 
