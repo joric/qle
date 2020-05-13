@@ -144,10 +144,15 @@ function update_hint(id, len, fw, fh, w, h) {
   }
 }
 
+function current_font_size() {
+  let fw = parseInt($('#fw').val());
+  let fh = parseInt($('#fh').val());
+  return [fw, fh];
+}
+
 function load_current_font() {
-  var font = $('#dec').val().split(',').map(Number);
-  var fw = parseInt($('#fw').val());
-  var fh = parseInt($('#fh').val());
+  let font = $('#dec').val().split(',').map(Number);
+  let [fw, fh] = current_font_size();
   return [font, fw, fh];
 }
 
@@ -156,11 +161,13 @@ function wrap(w, prefix, str) {
   return str.replace(re, prefix + '$1\n');
 }
 
+function toHex(x) {
+  return '0x' + ('0' + x.toString(16).toUpperCase()).slice(-2);
+}
+
 function format_data(tpl, data, hex, w, prefix) {
   if (hex) {
-    data = data.map(function(x) {
-      return '0x' + ('0' + x.toString(16).toUpperCase()).slice(-2);
-    });
+    data = data.map( function(x) { return toHex(x); } );
   }
   let out = wrap(w, prefix, data.join(', '));
   return tpl.replace('%s', out).replace(/\t/g, '    ');
@@ -623,10 +630,25 @@ function getXY(e) {
     var x0 = null;
     var y0 = null;
 
+    $('canvas').mouseout(function(e) {
+      $('#canvas_font_hint').text('');
+    });
+
     $('canvas').mousemove(function(e) {
 
+      let [x, y] = getXY(e);
+      let id = e.target.id;
+      if (id=='canvas_font') {
+        let [fw,fh] = current_font_size();
+        let col = ~~(x / fw);
+        let row = ~~(y / fh);
+        // consider there are always 32 columns
+        let ch = 32 * row + col;
+        $('#'+id).prop('title', toHex(ch)+'\n('+ch+')');
+        //$('#canvas_font_hint').text('Symbol '+toHex(ch)+'('+ch+')');
+      }
+
       if (buttonPressed) {
-        let [x, y] = getXY(e);
         draw_pixel(e.target.id, x, y, x0, y0);
         x0 = x;
         y0 = y;
