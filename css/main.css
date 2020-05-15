@@ -26,6 +26,11 @@ font-family: monospace;
 
 .canvas-container {
   position: relative;
+  overflow: auto;
+  width: 1110px;
+  height: 330px;
+  background: lightgrey;
+  margin-bottom: 0.5em;
 }
 
 canvas {
