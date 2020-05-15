@@ -1,8 +1,12 @@
 # QMK logo editor
 
-Live demo: 
+Live demo:
 
 * https://joric.github.io/qle
+
+Reddit:
+
+* https://redd.it/gjejxi
 
 ## References
 
