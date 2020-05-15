@@ -8,7 +8,6 @@ QMK uses "classic" fixed-space Adafruit_GFX 1.0 bitmap font.
 There are two basic API calls in the latest [QMK OLED Driver](https://beta.docs.qmk.fm/using-qmk/hardware-features/displays/feature_oled_driver):
 
 * `oled_write_P(const char *string)` Writes zero-terminated string using default font settings (treats 0x0A as a line break)
-
 * `oled_write_raw_P(const char *data)` Writes string of characters from 0 to 255 using provided data as 8x8 bitmap font
 
 ## References
