@@ -29,8 +29,8 @@ font-family: monospace;
   overflow: auto;
   width: 1110px;
   height: 330px;
-  background: lightgrey;
   margin-bottom: 0.5em;
+  resize: vertical;
 }
 
 canvas {
