@@ -27,9 +27,8 @@ font-family: monospace;
 .canvas-container {
   position: relative;
   overflow: auto;
-  width: 1110px;
-  height: 330px;
   margin-bottom: 0.5em;
+  height: 330px;
   resize: vertical;
 }
 
