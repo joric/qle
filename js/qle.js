@@ -171,18 +171,18 @@ function toHex(x) {
 }
 
 function format_data(tpl, data, hex, w, prefix) {
-  if (hex) {
     data = data.map(function(x) {
-      return toHex(x);
+      return hex ? toHex(x) : x.toString().padStart(3,' ')
     });
-  }
-  let out = wrap(w, prefix, data.join(', '));
+
+  let out = wrap(w, prefix, data.join(hex ? ', ':','));
+  if (!hex) out = prefix+out.trim();
   return tpl.replace('%s', out).replace(/\t/g, '    ');
 }
 
 function export_raw(data, fw, fh, w, h) {
-  let tpl = 'static void render_logo(void) {\n\tstatic const char PROGMEM raw_logo[] = {\n%s\t};\n\toled_write_raw_P(raw_logo, sizeof(raw_logo));\n}\n';
-  $('#raw').val(format_data(tpl, data, false, 130, '\t\t'));
+  let tpl = 'static void render_logo(void) {\n\tstatic const char PROGMEM raw_logo[] = {\n%s\n\t};\n\toled_write_raw_P(raw_logo, sizeof(raw_logo));\n}\n';
+  $('#raw').val(format_data(tpl, data, false, 16*8*'255,'.length, '\t\t'));
   update_hint('hint_raw', data.length, fw, fh, w, h);
 }
 
