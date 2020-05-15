@@ -7,8 +7,8 @@ Font and graphics editor for the [QMK](https://github.com/qmk/qmk_firmware) keyb
 QMK uses "classic" fixed-space Adafruit_GFX 1.0 bitmap font.
 There are two basic API calls in the latest [QMK OLED Driver](https://beta.docs.qmk.fm/using-qmk/hardware-features/displays/feature_oled_driver):
 
-* `oled_write_P(const char *string)` Writes zero-terminated string using default font settings (treats 0x0A as a line break)
-* `oled_write_raw_P(const char *data)` Writes string of characters in 0..255 range using provided data as 8x8 bitmap font
+* `oled_write_P(const char *string, bool invert)` Writes zero-terminated string using default font (0x0A is line break)
+* `oled_write_raw_P(const char *data, uint16_t size)` Writes string of characters in 0..255 range using data as 8x8 font
 
 ## References
 

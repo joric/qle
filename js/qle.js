@@ -181,7 +181,7 @@ function format_data(tpl, data, hex, w, prefix) {
 }
 
 function export_raw(data, fw, fh, w, h) {
-  let tpl = 'static void render_logo(void) {\n\tstatic const char PROGMEM raw_logo[] = {\n%s\t};\n\toled_write_raw_P(raw_logo, false);\n}\n';
+  let tpl = 'static void render_logo(void) {\n\tstatic const char PROGMEM raw_logo[] = {\n%s\t};\n\toled_write_raw_P(raw_logo, sizeof(raw_logo));\n}\n';
   $('#raw').val(format_data(tpl, data, false, 130, '\t\t'));
   update_hint('hint_raw', data.length, fw, fh, w, h);
 }
