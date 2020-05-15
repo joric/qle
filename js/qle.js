@@ -13,7 +13,7 @@ function load_image(src) {
   img.onload = function() {
     if (this.width > 256 || this.height > 256) {
       alert("Image is too large! 256x256 pixels max.");
-      src='';
+      src = '';
       return;
     }
     canvas.width = this.width;
@@ -24,6 +24,37 @@ function load_image(src) {
   };
 
   img.src = src;
+}
+
+function add_grid(id, g) {
+  let [fw, fh] = current_font_size();
+  if (id == 'canvas_raw') fw = fh = 8;
+  let c = $('#' + id)[0];
+  let w = g * fw;
+  let h = g * fh;
+  let cw = c.width * g;
+  let ch = c.height * g;
+
+  let s = '' +
+    '<svg width="' + cw + '" height="' + ch + '" xmlns="http://www.w3.org/2000/svg">' +
+    '  <defs>' +
+    '    <pattern id="' + id + '_grid_small" width="' + g + '" height="' + g + '" patternUnits="userSpaceOnUse">' +
+    '      <path d="M ' + g + ' 0 L 0 0 0 ' + g + '" fill="none" stroke="gray" stroke-width="0.5"/>' +
+    '    </pattern>' +
+    '    <pattern id="' + id + '_grid" width="' + w + '" height="' + h + '" patternUnits="userSpaceOnUse">' +
+    (g >= 8 ? ('      <rect width="' + w + '" height="' + h + '" fill="url(#' + id + '_grid_small)"/>') : '') +
+    '      <path d="M ' + w + ' 0 L 0 0 0 ' + h + '" fill="none" stroke="gray" stroke-width="1"/>' +
+    '    </pattern>' +
+    '  </defs>' +
+    '  <rect width="100%" height="100%" fill="url(#' + id + '_grid)" />' +
+    '</svg>';
+
+  let grid = $('#' + id + '+.grid-container')[0];
+  grid.innerHTML = g != 1 ? s : '';
+}
+
+function remove_grid(id) {
+  $('#' + id + '+.grid-container')[0].innerHTML = '';
 }
 
 function scale_all() {
@@ -37,32 +68,9 @@ function scale_all() {
 
   for (c of $('canvas')) {
     let g = sizes[size];
-    $(c).css('width', c.width * g);
     let id = c.id;
-    let div = $('#' + id + '+.grid-container')[0];
-    let [_, fw, fh] = load_current_font();
-    let w = g * fw;
-    let h = g * fh;
-    let cw = c.width * g;
-    let ch = c.height * g;
-
-    let s = '' +
-      '<svg width="' + cw + '" height="' + ch + '" xmlns="http://www.w3.org/2000/svg">' +
-      '  <defs>' +
-      '    <pattern id="smallGrid" width="' + g + '" height="' + g + '" patternUnits="userSpaceOnUse">' +
-      '      <path d="M ' + g + ' 0 L 0 0 0 ' + g + '" fill="none" stroke="gray" stroke-width="0.5"/>' +
-      '    </pattern>' +
-      '    <pattern id="grid" width="' + w + '" height="' + h + '" patternUnits="userSpaceOnUse">' +
-      (size != 'medium' ? ('      <rect width="' + w + '" height="' + h + '" fill="url(#smallGrid)"/>') : '') +
-      '      <path d="M ' + w + ' 0 L 0 0 0 ' + h + '" fill="none" stroke="gray" stroke-width="1"/>' +
-      '    </pattern>' +
-      '  </defs>' +
-      '  <rect width="100%" height="100%" fill="url(#grid)" />' +
-      '</svg>';
-
-    div.innerHTML = g != 1 ? s : '';
-
-    // grids adds fine on all tabs, I don't know why it's showing only on the font tab. css issues?
+    $('#' + id).css('width', c.width * g);
+    add_grid(id, g);
   }
 }
 
@@ -165,7 +173,9 @@ function toHex(x) {
 
 function format_data(tpl, data, hex, w, prefix) {
   if (hex) {
-    data = data.map( function(x) { return toHex(x); } );
+    data = data.map(function(x) {
+      return toHex(x);
+    });
   }
   let out = wrap(w, prefix, data.join(', '));
   return tpl.replace('%s', out).replace(/\t/g, '    ');
@@ -308,16 +318,15 @@ function putchar(i, x, y, data, fw, fh, imageData, w, h) {
   }
 }
 
-function render_image(ctrl, chars, font, fw, fh, w, h, is_raw) {
-  var canvas = document.getElementById(ctrl);
+function render_image(id, chars, font, fw, fh, w, h, is_raw) {
+  var canvas = document.getElementById(id);
   var ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   canvas.width = w;
   canvas.height = h;
 
-  // remove grid
-  $('#' + ctrl + '+.grid-container')[0].innerHTML = '';
+  remove_grid(id);
 
   if (w == 0 || h == 0) return;
 
@@ -345,7 +354,7 @@ function render_image(ctrl, chars, font, fw, fh, w, h, is_raw) {
 
   scale_all();
 
-  capture_image(ctrl);
+  capture_image(id);
 }
 
 
@@ -634,29 +643,33 @@ function getXY(e) {
     $('canvas').mouseout(function(e) {
       $('#canvas_font_hint').text('');
       $('canvas').prop('title', '');
+      $('.hint_char').text('');
     });
 
     $('canvas').mousemove(function(e) {
 
-      let [x, y] = getXY(e);
       let id = e.target.id;
-      if (id=='canvas_font') {
-        let [fw,fh] = current_font_size();
-        let col = ~~(x / fw);
-        let row = ~~(y / fh);
-        // consider there are always 32 columns
-        let ch = 32 * row + col;
 
-        let size = $("input[name='scale']:checked").attr('id');
+      let [x, y] = getXY(e);
 
-        if (size == 'medium')
-          $('#'+id).prop('title', toHex(ch)+'\n('+ch+')');
+      let [fw, fh] = current_font_size();
+      if (id == 'canvas_raw') fw = fh = 8;
 
-        //$('#canvas_font_hint').text('Symbol '+toHex(ch)+'('+ch+')');
-      }
+      let col = ~~(x / fw);
+      let row = ~~(y / fh);
+
+      let cols = ~~(e.target.width / fw);
+
+      let ch = cols * row + col;
+
+      //let ch = 32 * row + col;
+      //let size = $("input[name='scale']:checked").attr('id');
+      //if (size == 'medium') $('#'+id).prop('title', toHex(ch)+'\n('+ch+')');
+
+      $('.hint_char').text('Symbol ' + toHex(ch) + ' (' + ch + ')');
 
       if (buttonPressed) {
-        draw_pixel(e.target.id, x, y, x0, y0);
+        draw_pixel(id, x, y, x0, y0);
         x0 = x;
         y0 = y;
       }

@@ -111,7 +111,6 @@
             </div>
             <div class="col">
               <div class="float-right form-inline">
-              <span class="float-right mr-2" id="canvas_font_hint"></span>
                 <div class="mr-2">Font Width</div>
                 <input class="form-control mr-1" id="fw" max="256" min="1" size="1" type="number" value="6" />
                 <div class="ml-2 mr-2">Font Height</div>
@@ -129,6 +128,7 @@
           </div>
           <div class="mt-1">
             <span id="hint_font"></span>
+            <span class="float-right hint_char"></span>
           </div>
         </div>
         <!--logo-->
@@ -153,7 +153,10 @@
             </li>
           </ul>
           <textarea class="form-control" id="logo" rows="10" wrap="off"></textarea>
-          <div class="mt-1" id="hint_logo"></div>
+          <div class="mt-1">
+            <span id="hint_logo"></span>
+            <span class="float-right hint_char"></span>
+          </div>
         </div>
         <!--raw-->
         <div class="tab-pane fade" id="nav-raw" role="tabpanel">
@@ -174,7 +177,10 @@
             </li>
           </ul>
           <textarea class="form-control" id="raw" rows="12" wrap="off"></textarea>
-          <div class="mt-1" id="hint_raw"></div>
+          <div class="mt-1">
+            <span id="hint_raw"></span>
+            <span class="float-right hint_char"></span>
+          </div>
         </div>
       </div>
     </div>
