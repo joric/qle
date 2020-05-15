@@ -724,6 +724,7 @@ function getXY(e) {
       }
     });
 
+
     $('#download').on('click', function(e) {
       var id = get_current_canvas_id();
       var canvas = document.getElementById(id);
@@ -739,7 +740,11 @@ function getXY(e) {
       a.remove();
     });
 
-    $('#thumbnail').on('change', function() {
+    $('#upload').on('click', function(e) {
+        $('#file').click();
+    });
+
+    $('#file').on('change', function() {
       var file = $(this).get(0).files;
       var reader = new FileReader();
       reader.readAsDataURL(file[0]);

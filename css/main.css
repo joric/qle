@@ -24,18 +24,6 @@ textarea {
 font-family: monospace;
 }
 
-.my-file-upload{
-  position: relative;
-  overflow: hidden;
-}
-
-.my-file-upload input {
-  position: absolute;
-  opacity: 0;
-  right: 0;
-  top: 0;
-}
-
 .canvas-container {
   position: relative;
 }
