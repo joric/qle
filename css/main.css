@@ -27,10 +27,13 @@ font-family: monospace;
 .canvas-container {
   position: relative;
   overflow: auto;
-  margin-bottom: 0.5em;
-  height: 330px;
+  max-height: 330px;
   resize: vertical;
 }
+
+.canvas-container[style*="height"] {
+  max-height: unset;
+} 
 
 canvas {
   image-rendering: pixelated;
