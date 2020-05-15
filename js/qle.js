@@ -49,12 +49,11 @@ function add_grid(id, g) {
     '  <rect width="100%" height="100%" fill="url(#' + id + '_grid)" />' +
     '</svg>';
 
-  let grid = $('#' + id + '+.grid-container')[0];
-  grid.innerHTML = g != 1 ? s : '';
+  grid = $('#' + id + '+.grid-container').html(g != 1 ? s : '');
 }
 
 function remove_grid(id) {
-  $('#' + id + '+.grid-container')[0].innerHTML = '';
+  $('#' + id + '+.grid-container').html('');
 }
 
 function scale_all() {
