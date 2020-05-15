@@ -16,5 +16,5 @@ static void render_logo(void) {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0
     };
-    oled_write_raw_P(raw_logo, false);
+    oled_write_raw_P(raw_logo, sizeof(raw_logo));
 }
