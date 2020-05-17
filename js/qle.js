@@ -4,6 +4,10 @@ hist = {
   'canvas_raw': []
 };
 
+function update_hint_char(ch) {
+  $('.hint_char').text('Symbol ' + toHex(ch) + ' (' + ch + ')');
+}
+
 function load_image(src) {
   var id = get_current_canvas_id();
   var canvas = document.getElementById(id);
@@ -374,7 +378,7 @@ function parse_raw_file(text) {
   render_raw("canvas_raw", parse_text(text).data);
 }
 
-function oled_write_P(chars, fw, fh, callback) {
+function oled_write_P(chars, fw, fh, callback, param) {
   let x = 0;
   let y = 0;
   let w = 0;
@@ -390,7 +394,7 @@ function oled_write_P(chars, fw, fh, callback) {
         x = 0;
       }
       if (callback)
-        callback(ch, x, y);
+        callback(ch, x, y, param);
       x += fw;
     }
     if (x > w) w = x;
@@ -661,11 +665,28 @@ function getXY(e) {
 
       let ch = cols * row + col;
 
+      if (id == 'canvas_logo') {
+        // need to remap symbol according to the data
+        // not cached, might be a little bit on the slower side
+        let [font, fw, fh] = load_current_font();
+        let chars = parse_text($('#logo').val()).data;
+
+        oled_write_P(chars, fw, fh, function(ch, x, y, param) {
+          let [col, row] = param;
+          if (col*fw==x && row*fh==y) {
+              update_hint_char(ch);
+          }
+
+        }, [col, row]);
+
+      } else {
+        update_hint_char(ch);
+      }
+
       //let ch = 32 * row + col;
       //let size = $("input[name='scale']:checked").attr('id');
       //if (size == 'medium') $('#'+id).prop('title', toHex(ch)+'\n('+ch+')');
 
-      $('.hint_char').text('Symbol ' + toHex(ch) + ' (' + ch + ')');
 
       if (buttonPressed) {
         draw_pixel(id, x, y, x0, y0);
