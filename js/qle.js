@@ -321,6 +321,20 @@ function putchar(i, x, y, data, fw, fh, imageData, w, h) {
   }
 }
 
+function write_chars(chars, font, fw,fh, imageData, w, h) {
+  var x = 0;
+  var y = 0;
+  cols = ~~(w / fw);
+  for (ch of chars) {
+    if (x >= cols * fw) {
+      x = 0;
+      y += fh;
+    }
+    putchar(ch, x, y, font, fw, fh, imageData, w, h);
+    x += fw;
+  }
+}
+
 function render_image(id, chars, font, fw, fh, w, h, is_raw) {
   var canvas = document.getElementById(id);
   var ctx = canvas.getContext('2d');
@@ -335,23 +349,16 @@ function render_image(id, chars, font, fw, fh, w, h, is_raw) {
 
   var imageData = ctx.createImageData(w, h);
 
-  var x = 0;
-  var y = 0;
+  if (id=='canvas_logo') {
+    oled_write_P(chars, fw, fh, function(ch, x, y, param) {
+      [font, imageData,w,h] = param;
+      putchar(ch, x, y, font, fw, fh, imageData, w, h);
+    },[font,imageData,w,h]);
 
-  cols = ~~(w / fw);
-
-  for (ch of chars) {
-    if (!is_raw && (ch == 0 || ch == 10 || ch == 13))
-      continue;
-
-    if (x >= cols * fw) {
-      x = 0;
-      y += fh;
-    }
-
-    putchar(ch, x, y, font, fw, fh, imageData, w, h);
-    x += fw;
+  } else {
+    write_chars(chars, font, fw,fh,imageData,w,h);
   }
+
 
   ctx.putImageData(imageData, 0, 0);
 
