@@ -206,13 +206,6 @@ function getpixel(x, y, imageData) {
 }
 
 
-function getchpos(i, w, h, fw, fh) {
-  let x = ~~((i * fw) % w);
-  let y = ~~((i * fw) / w) * fh;
-  return [x, y];
-}
-
-
 function parse_image(canvas_id) {
   var canvas = document.getElementById(canvas_id);
   var ctx = canvas.getContext('2d');
