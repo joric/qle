@@ -385,12 +385,12 @@ function oled_write_P(chars, fw, fh, callback, param) {
   let h = 0;
   let maxw = 128;
   for (ch of chars) {
-    if (ch==0) break;
-
-    if (ch == 10 || ch == 13) {
+    if (ch==0) {
+      break;
+    } else if (ch == 10 || ch == 13) {
       y += fh;
       x = 0;
-    } else if (ch != 0) {
+    } else {
       if (x + fw > maxw) {
         y += fh;
         x = 0;
