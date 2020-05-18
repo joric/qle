@@ -16,4 +16,6 @@ There are two basic API calls in the latest [QMK OLED Driver](https://beta.docs.
 * https://www.reddit.com/r/olkb/comments/gk1her/qmk_logo_editor
 * https://gist.github.com/joric/96b6a1a65eedc224b7d9d3d17bd4e9e8 (crkbd_logo_converter.py)
 * https://helixfonteditor.netlify.app (Helix Font Editor by [@teri_yakichan](https://twitter.com/teri_yakichan))
+* https://docs.qmk.fm/#/feature_oled_driver?id=logo-example
+* https://github.com/RustyJonez/OLED-ART-tinkering
 * https://javl.github.io/image2cpp
