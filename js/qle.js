@@ -385,6 +385,8 @@ function oled_write_P(chars, fw, fh, callback, param) {
   let h = 0;
   let maxw = 128;
   for (ch of chars) {
+    if (ch==0) break;
+
     if (ch == 10 || ch == 13) {
       y += fh;
       x = 0;
