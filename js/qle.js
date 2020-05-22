@@ -171,7 +171,7 @@ function wrap(w, prefix, str) {
 }
 
 function toHex(x) {
-  return '0x' + ('0' + x.toString(16).toUpperCase()).slice(-2);
+  return '0x' + ('0' + x.toString(16)).slice(-2).toUpperCase();
 }
 
 function format_data(tpl, data, hex, w, prefix) {
