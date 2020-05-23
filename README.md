@@ -10,6 +10,17 @@ There are two basic API calls in the latest [QMK OLED Driver](https://beta.docs.
 * `oled_write_P(const char *string, bool invert)` Writes zero-terminated string using default font (0x0A is line break)
 * `oled_write_raw_P(const char *data, uint16_t size)` Writes string of characters in 0..255 range using data as 8x8 font
 
+There are a few ways of adding a custom font to your keyboard (all they use local config files of the keymap):
+
+* `SRC` in `rules.mk`: `SRC += ./lib/glcdfont.c` (crkbd)
+* `LOCAL_GLCDFONT` in `rules.mk`: `LOCAL_GLCDFONT = yes` (gergo)
+* `OLED_FONT_H` in `config.h`: `#define OLED_FONT_H "keyboards/lily58/lib/glcdfont.c"` (lily58)
+
+The latest official way is redefining `OLED_FONT_H` in the `config.h` of your keymap (there also other settings):
+
+* https://beta.docs.qmk.fm/using-qmk/hardware-features/displays/feature_oled_driver
+
+
 ## References
 
 * https://www.reddit.com/r/MechanicalKeyboards/comments/gjejxi/qmk_logo_editor
