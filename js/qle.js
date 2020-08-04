@@ -179,7 +179,7 @@ function format_data(tpl, data, hex, w, prefix) {
       return hex ? toHex(x) : x.toString().padStart(3,' ')
     });
 
-  let out = wrap(w, prefix, data.join(hex ? ', ':','));
+  let out = wrap(w, prefix, data.join(hex ? ', ':',')+',');
   if (!hex) out = prefix+out.trim();
   return tpl.replace('%s', out).replace(/\t/g, '    ');
 }
