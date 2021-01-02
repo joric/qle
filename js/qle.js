@@ -577,18 +577,17 @@ function getXY(e) {
   $(document).ready(function() {
 
     $('#examples a').on('click', function(e) {
-      let url = 'https://raw.githubusercontent.com/qmk/qmk_firmware/master/' + e.target.text + '/glcdfont.c';
-      load_font_file(url, true);
+      load_font_file(e.target.href, true);
       e.preventDefault();
     });
 
     $('#examples_raw a').on('click', function(e) {
-      load_raw_file(e.target.text);
+      load_raw_file(e.target.href);
       e.preventDefault();
     });
 
     $('#examples_logo a').on('click', function(e) {
-      load_logo_file(e.target.text);
+      load_logo_file(e.target.href);
       e.preventDefault();
     });
 
