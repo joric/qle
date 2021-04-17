@@ -202,7 +202,7 @@ function getpixel(x, y, imageData) {
   var green = imageData.data[index + 1];
   var blue = imageData.data[index + 2];
   var alpha = imageData.data[index + 3];
-  return red + green + blue >= 0.5 ? 1 : 0;
+  return red + green + blue >= 127 ? 1 : 0;
 }
 
 
