@@ -365,7 +365,7 @@ function render_raw(ctrl, data) {
   var font = data;
   var fw = 8;
   var fh = 8;
-  var w = 128;
+  var w = parseInt($('#iw').val());
   var cols = ~~(w / fw);
   var h = ~~(data.length / cols);
   let total = ~~(font.length / fw);
@@ -624,6 +624,10 @@ function getXY(e) {
 
     $('#raw').on('input', function(e) {
       parse_raw_file(e.target.value);
+    });
+
+    $('#iw').on('input', function(e) {
+      parse_raw_file($('#raw').val());
     });
 
     $('canvas').mousedown(function(e) {
