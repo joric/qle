@@ -8,6 +8,15 @@ function update_hint_char(ch) {
   $('.hint_char').text('Symbol ' + toHex(ch) + ' (' + ch + ')');
 }
 
+function spinnerValue(obj) {
+  let vmin = parseInt(obj.attr('min') ?? 1);
+  let vmax = parseInt(obj.attr('max') ?? 512);
+  let step = parseInt(obj.attr('step') ?? 1);
+  let val = parseInt('0'+obj.val());
+  let res = Math.min(vmax, Math.max(vmin, Math.floor(val/step)*step));
+  return res;
+}
+
 function load_image(src) {
   var id = get_current_canvas_id();
   var canvas = document.getElementById(id);
@@ -154,8 +163,8 @@ function update_hint(id, len, fw, fh, w, h) {
 }
 
 function current_font_size() {
-  let fw = parseInt($('#fw').val());
-  let fh = parseInt($('#fh').val());
+  let fw = spinnerValue($('#fw'));
+  let fh = spinnerValue($('#fh'));
   return [fw, fh];
 }
 
@@ -364,8 +373,7 @@ function render_raw(ctrl, data) {
   var font = data;
   var fw = 8;
   var fh = 8;
-  var w = parseInt($('#iw').val());
-  w = Math.min(512, Math.max(8, (w>>3)<<3));
+  var w = spinnerValue($('#iw'));
   var cols = ~~(w / fw);
   var h = ~~(data.length / cols);
   let total = ~~(font.length / fw);
