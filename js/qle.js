@@ -365,7 +365,7 @@ function render_raw(ctrl, data) {
   var font = data;
   var fw = 8;
   var fh = 8;
-  var w = parseInt($('#iw').val());
+  var w = Math.min(8, parseInt($('#iw').val()));
   var cols = ~~(w / fw);
   var h = ~~(data.length / cols);
   let total = ~~(font.length / fw);
