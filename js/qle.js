@@ -13,7 +13,7 @@ function spinnerValue(obj) {
   let vmax = parseInt(obj.attr('max') ?? 512);
   let step = parseInt(obj.attr('step') ?? 1);
   let val = parseInt('0'+obj.val());
-  let res = Math.min(vmax, Math.max(vmin, Math.floor(val/step)*step));
+  let res = Math.min(vmax, Math.max(vmin, Math.ceil(val/step)*step));
   return res;
 }
 
