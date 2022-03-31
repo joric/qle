@@ -545,6 +545,7 @@ function getXY(e) {
 
   function load_logo_file(url) {
     $('#logo').load(url, function(text) {
+      $('#logo').val(text);
       parse_logo_file(text);
     });
   }
