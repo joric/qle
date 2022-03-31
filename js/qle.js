@@ -86,6 +86,10 @@ function scale_all() {
   }
 }
 
+function get_current_hover_id() {
+  return global_hover_id;
+}
+
 function get_current_canvas_id() {
   var tab = $("#nav-tab a.active")[0].id;
   return tab == 'nav-font-tab' ? "canvas_font" : (tab == 'nav-logo-tab' ? 'canvas_logo' : 'canvas_raw');
@@ -661,11 +665,14 @@ function getXY(e) {
       $('#canvas_font_hint').text('');
       $('canvas').prop('title', '');
       $('.hint_char').text('');
+      global_hover_id = null;
     });
 
     $('canvas').mousemove(function(e) {
 
       let id = e.target.id;
+
+      global_hover_id = id;
 
       let [x, y] = getXY(e);
 
@@ -748,13 +755,27 @@ function getXY(e) {
     //$('#undo').prop('disabled', true);
     //$('#redo').prop('disabled', true);
 
+    function copy_canvas_to_clipboard() {
+      let id = get_current_canvas_id();
+      let canvas = document.getElementById(id);
+      canvas.toBlob(function(blob) { 
+          const item = new ClipboardItem({ "image/png": blob });
+          navigator.clipboard.write([item]); 
+      });
+    }
+
     $("body").keydown(function(e) {
       if ($('textarea').is(':focus')) return;
       if (e.ctrlKey || e.metaKey) {
-        if (e.keyCode == 90)
+        if (e.keyCode == 90) // Ctrl+Z
           undo();
-        if (e.keyCode == 89)
+        if (e.keyCode == 89) // Ctrl+Y
           redo();
+        if (e.keyCode == 67) { // Ctrl+C
+          if (["canvas_font","canvas_logo","canvas_raw"].includes(get_current_hover_id())) {
+            copy_canvas_to_clipboard();
+          }
+        }
       }
     });
 
