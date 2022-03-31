@@ -18,10 +18,7 @@
         <a class="navbar-brand" href="">QMK Logo Editor</a>
         <div class="collapse navbar-collapse" id="navbars">
           <div class="nav navbar-nav" id="nav-tab" role="tablist">
-            <a class="nav-link disabled" href="#">Context menu on image to copy, Ctrl+V to paste image from the clipboard, Ctrl+Z to undo</a>
-            <!--
-            <a aria-controls="nav-font" aria-selected="false" class="nav-item nav-link active" data-toggle="tab" href="#nav-font" id="nav-font-tab" role="tab">Font</a> <a aria-controls="nav-logo" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-logo" id="nav-logo-tab" role="tab">Logo</a> <a aria-controls="nav-logo" aria-selected="false" class="nav-item nav-link" data-toggle="tab" href="#nav-raw" id="nav-raw-tab" role="tab">Raw</a>
--->
+            <span class="text-light">Use picture context menu to copy image, Ctrl+V to paste image from the clipboard, Ctrl+Z/Ctrl+Y to undo/redo.</span>
           </div>
         </div>
       </div>
@@ -29,29 +26,28 @@
     <div class="container">
       <nav>
         <div class="nav nav-pills mt-3 mb-2" id="nav-tab" role="tablist">
-          <a class="nav-item nav-link active" data-toggle="tab" href="#nav-font" id="nav-font-tab" role="tab">Font</a>
-          <a class="nav-item nav-link" data-toggle="tab" href="#nav-logo" id="nav-logo-tab" role="tab">Text</a>
-          <a class="mr-5 nav-item nav-link" data-toggle="tab" href="#nav-raw" id="nav-raw-tab" role="tab">Raw</a>
-          <!--use class="ml-auto" to pull right -->
+          <a class="nav-item nav-link active" data-toggle="tab" href="#nav-font" id="nav-font-tab" role="tab" title="Pixel font, arbitrary font width, height is 8 or 16 pixels.">Font</a>
+          <a class="nav-item nav-link" data-toggle="tab" href="#nav-logo" id="nav-logo-tab" role="tab" title="Arbitrary text (uses font characters), 0x10 for newline">Text</a>
+          <a class="mr-5 nav-item nav-link" data-toggle="tab" href="#nav-raw" id="nav-raw-tab" role="tab" title="Arbitrary bitmap data, fixed tile width and height (8x8).">Raw</a>
           <div class="">
             <div class="mr-5 btn-group btn-group-toggle" data-toggle="buttons" id="scale">
-              <label class="btn btn-secondary active">
+              <label class="btn btn-secondary active" title="1x">
                 <input id="small" name="scale" type="radio">Small</input>
               </label>
-              <label class="btn btn-secondary">
+              <label class="btn btn-secondary" title="5x">
                 <input checked="checked" id="medium" name="scale" type="radio">Medium</input>
               </label>
-              <label class="btn btn-secondary">
+              <label class="btn btn-secondary" title="16x">
                 <input id="large" name="scale" type="radio">Large</input>
               </label>
             </div>
             <div class="mr-5 btn-group" role="group">
-              <button class="btn btn-secondary" id="undo" type="button">Undo</button>
-              <button class="btn btn-primary" id="redo" type="button">Redo</button>
+              <button class="btn btn-secondary" id="undo" type="button" title="Ctrl+Z">Undo</button>
+              <button class="btn btn-primary" id="redo" type="button" title="Ctrl+Y">Redo</button>
             </div>
             <div class="btn-group">
-              <button class="btn btn-secondary" id="upload">Upload Image</button>
-              <button class="btn btn-primary" id="download">Download Image</button>
+              <button class="btn btn-secondary" id="upload" title="Upload picture in arbitrary format">Upload Image</button>
+              <button class="btn btn-primary" id="download" title="Download .PNG">Download Image</button>
             </div>
             <input class="d-none" id="file" type="file" />
           </div>
