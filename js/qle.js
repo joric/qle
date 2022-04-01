@@ -772,7 +772,7 @@ function getXY(e) {
         if (e.keyCode == 89) // Ctrl+Y
           redo();
         if (e.keyCode == 67) { // Ctrl+C
-          if (["canvas_font","canvas_logo","canvas_raw"].includes(get_current_hover_id())) {
+          if (String(window.getSelection())=="") {
             copy_canvas_to_clipboard();
           }
         }
