@@ -773,6 +773,7 @@ function getXY(e) {
           redo();
         if (e.keyCode == 67) { // Ctrl+C
           if (String(window.getSelection())=="") {
+            console.log("copied to clipboard");
             copy_canvas_to_clipboard();
           }
         }
