@@ -37,6 +37,7 @@ function load_image(src) {
   };
 
   img.src = src;
+  setTimeout(scale_all, 50);
 }
 
 function add_grid(id, g) {
