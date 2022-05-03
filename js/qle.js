@@ -199,13 +199,13 @@ function format_data(tpl, data, hex, w, prefix) {
 }
 
 function export_raw(data, fw, fh, w, h) {
-  let tpl = 'static void render_logo(void) {\n\tstatic const char PROGMEM raw_logo[] = {\n%s\n\t};\n\toled_write_raw_P(raw_logo, sizeof(raw_logo));\n}\n';
+  let tpl = 'static void render_logo(void) {\n\tstatic const unsigned char PROGMEM raw_logo[] = {\n%s\n\t};\n\toled_write_raw_P(raw_logo, sizeof(raw_logo));\n}\n';
   $('#raw').val(format_data(tpl, data, false, 16*8*'255,'.length, '\t\t'));
   update_hint('hint_raw', data.length, fw, fh, w, h);
 }
 
 function export_font(data, fw, fh) {
-  let tpl = 'static const char PROGMEM font[] = {\n%s};\n';
+  let tpl = 'static const unsigned char PROGMEM font[] = {\n%s};\n';
   $('#font').val(format_data(tpl, data, true, fw * '0x00, '.length, '\t'));
   $('#dec').val(data.join(','));
 }
