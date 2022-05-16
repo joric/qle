@@ -24,8 +24,8 @@ function load_image(src) {
   var img = new Image();
 
   img.onload = function() {
-    if (this.width > 256 || this.height > 256) {
-      alert("Image is too large! 256x256 pixels max.");
+    if (this.width > 512 || this.height > 512) {
+      alert("Image is too large! 512x512 pixels max.");
       src = '';
       return;
     }
