@@ -283,6 +283,7 @@ window.addEventListener("paste", function(e) {
     if (imageBlob) {
       var URLObj = window.URL || window.webkitURL;
       load_image(URLObj.createObjectURL(imageBlob));
+      console.log("pasted from clipboard");
     }
   });
 }, false);
