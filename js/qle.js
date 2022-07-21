@@ -4,8 +4,12 @@ hist = {
   'canvas_raw': []
 };
 
-function update_hint_char(ch) {
+function update_hint_char(ch, sx, sy, bw, bh) {
   $('.hint_char').text('Symbol ' + toHex(ch) + ' (' + ch + ')');
+  let b = $('.symbol-overlay')
+  b.css({left: sx, top: sy, width: bw, height: bh});
+  b.show();
+  b.text(toHex(ch).slice(-2));
 }
 
 function spinnerValue(obj) {
@@ -70,17 +74,19 @@ function remove_grid(id) {
   $('#' + id + '+.grid-container').html('');
 }
 
-function scale_all() {
+function get_cell_size() {
   let size = $("input[name='scale']:checked").attr('id');
-
   sizes = {
     'small': 1,
     'medium': 5,
     'large': 16
   };
+  return sizes[size];
+}
 
+function scale_all() {
   for (c of $('canvas')) {
-    let g = sizes[size];
+    let g = get_cell_size()
     let id = c.id;
     $('#' + id).css('width', c.width * g);
     add_grid(id, g);
@@ -667,6 +673,7 @@ function getXY(e) {
       $('#canvas_font_hint').text('');
       $('canvas').prop('title', '');
       $('.hint_char').text('');
+      $('.symbol-overlay').hide();
       global_hover_id = null;
     });
 
@@ -688,6 +695,12 @@ function getXY(e) {
 
       let ch = cols * row + col;
 
+      let g = get_cell_size();
+      let bw = g * fw;
+      let bh = g * fh;
+      let sx = col * g * fw;
+      let sy = row * g * fh;
+
       if (id == 'canvas_logo') {
         // need to remap symbol according to the data
         // not cached, might be a little bit on the slower side
@@ -697,13 +710,14 @@ function getXY(e) {
         oled_write_P(chars, fw, fh, function(ch, x, y, param) {
           let [col, row] = param;
           if (col*fw==x && row*fh==y) {
-              update_hint_char(ch);
+              update_hint_char(ch, sx,sy,bw,bh);
           }
 
         }, [col, row]);
 
       } else {
-        update_hint_char(ch);
+
+        update_hint_char(ch, sx,sy,bw,bh);
       }
 
       //let ch = 32 * row + col;
