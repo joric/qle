@@ -6,10 +6,13 @@ hist = {
 
 function update_hint_char(ch, sx, sy, bw, bh) {
   $('.hint_char').text('Symbol ' + toHex(ch) + ' (' + ch + ')');
-  let b = $('.symbol-overlay')
-  b.css({left: sx, top: sy, width: bw, height: bh});
-  b.show();
-  b.text(toHex(ch).slice(-2));
+
+  if (get_cell_size()>1) {
+    let b = $('.symbol-overlay')
+    b.css({left: sx, top: sy, width: bw, height: bh});
+    b.text(toHex(ch).slice(-2));
+    b.show();
+  }
 }
 
 function spinnerValue(obj) {
