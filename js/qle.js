@@ -4,15 +4,8 @@ hist = {
   'canvas_raw': []
 };
 
-function update_hint_char(ch, sx, sy, bw, bh) {
+function update_hint_char(ch) {
   $('.hint_char').text('Symbol ' + toHex(ch) + ' (' + ch + ')');
-
-  if (bw>=16) {
-    let b = $('.symbol-overlay')
-    b.css({left: sx, top: sy, width: bw, height: bh});
-    b.text(toHex(ch).slice(-2));
-    b.show();
-  }
 }
 
 function spinnerValue(obj) {
@@ -67,8 +60,20 @@ function add_grid(id, g) {
     '      <path d="M ' + w + ' 0 L 0 0 0 ' + h + '" fill="none" stroke="gray" stroke-width="1"/>' +
     '    </pattern>' +
     '  </defs>' +
-    '  <rect width="100%" height="100%" fill="url(#' + id + '_grid)" />' +
-    '</svg>';
+    '  <style>.small { font: 13px sans-serif; fill: grey;}</style>' +
+    '  <rect width="100%" height="100%" fill="url(#' + id + '_grid)" />';
+
+  // add symbol numbers
+  if (w>64) {
+    for (let y=0; y<ch; y+=h) {
+      for (let x=0; x<cw; x+=w) {
+        a = toHex(get_char_code(id, x/g, y/g)).slice(-2);
+        s +='<text text-anchor="end" x="'+(x+w-1)+'" y="'+(y+h-2)+'" class="small">'+a+'</text>\n'
+      }
+    }
+  }
+
+  s += '</svg>';
 
   grid = $('#' + id + '+.grid-container').html(g != 1 ? s : '');
 }
@@ -534,6 +539,48 @@ function getXY(e) {
   return [x, y];
 }
 
+function get_char_code(id, x, y) {
+  // gets char code from canvas coordinates x,y
+  let [fw, fh] = current_font_size();
+
+  if (id == 'canvas_raw') fw = fh = 8;
+
+  let col = ~~(x / fw);
+  let row = ~~(y / fh);
+
+  let canvas_width = document.getElementById(id).width;
+
+  let cols = ~~(canvas_width / fw);
+
+  let ch = cols * row + col;
+
+  // this may be unused for now (screen cell offset/size)
+  let g = get_cell_size();
+  let bw = g * fw;
+  let bh = g * fh;
+  let sx = col * g * fw;
+  let sy = row * g * fh;
+
+  if (id == 'canvas_logo') {
+      // need to remap symbol according to the data
+      // not cached, might be a little bit on the slower side
+      let [font, fw, fh] = load_current_font();
+      let chars = parse_text($('#logo').val()).data;
+
+      oled_write_P(chars, fw, fh, function(current_ch, x, y, param) {
+        let [col, row] = param;
+        if (col*fw==x && row*fh==y) {
+            ch = current_ch;
+        }
+      }, [col, row]);
+
+      return ch;
+  } else {
+    return ch;
+  }
+
+  return 0
+}
 
 (function($) {
 
@@ -688,45 +735,9 @@ function getXY(e) {
 
       let [x, y] = getXY(e);
 
-      let [fw, fh] = current_font_size();
-      if (id == 'canvas_raw') fw = fh = 8;
+      ch = get_char_code(id, x, y);
 
-      let col = ~~(x / fw);
-      let row = ~~(y / fh);
-
-      let cols = ~~(e.target.width / fw);
-
-      let ch = cols * row + col;
-
-      let g = get_cell_size();
-      let bw = g * fw;
-      let bh = g * fh;
-      let sx = col * g * fw;
-      let sy = row * g * fh;
-
-      if (id == 'canvas_logo') {
-        // need to remap symbol according to the data
-        // not cached, might be a little bit on the slower side
-        let [font, fw, fh] = load_current_font();
-        let chars = parse_text($('#logo').val()).data;
-
-        oled_write_P(chars, fw, fh, function(ch, x, y, param) {
-          let [col, row] = param;
-          if (col*fw==x && row*fh==y) {
-              update_hint_char(ch, sx,sy,bw,bh);
-          }
-
-        }, [col, row]);
-
-      } else {
-
-        update_hint_char(ch, sx,sy,bw,bh);
-      }
-
-      //let ch = 32 * row + col;
-      //let size = $("input[name='scale']:checked").attr('id');
-      //if (size == 'medium') $('#'+id).prop('title', toHex(ch)+'\n('+ch+')');
-
+      update_hint_char(ch);
 
       if (buttonPressed) {
         draw_pixel(id, x, y, x0, y0);
