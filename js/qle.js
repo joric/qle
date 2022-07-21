@@ -68,7 +68,7 @@ function add_grid(id, g) {
     for (let y=0; y<ch; y+=h) {
       for (let x=0; x<cw; x+=w) {
         let cc = get_char_code(id, x/g, y/g);
-        let a = toHex(cc) + ' (' + cc + ')'
+        let a = toHex(cc) + ' (' + cc + ')';
         s +='<text text-anchor="end" x="'+(x+w-1)+'" y="'+(y+h-2)+'" class="small">'+a+'</text>\n'
       }
     }
@@ -574,13 +574,9 @@ function get_char_code(id, x, y) {
             ch = current_ch;
         }
       }, [col, row]);
-
-      return ch;
-  } else {
-    return ch;
   }
 
-  return 0
+  return ch;
 }
 
 (function($) {
