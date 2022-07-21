@@ -67,7 +67,8 @@ function add_grid(id, g) {
   if (w>64) {
     for (let y=0; y<ch; y+=h) {
       for (let x=0; x<cw; x+=w) {
-        a = toHex(get_char_code(id, x/g, y/g)).slice(-2);
+        let cc = get_char_code(id, x/g, y/g);
+        let a = toHex(cc) + ' (' + cc + ')'
         s +='<text text-anchor="end" x="'+(x+w-1)+'" y="'+(y+h-2)+'" class="small">'+a+'</text>\n'
       }
     }
