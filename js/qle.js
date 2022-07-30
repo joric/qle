@@ -5,7 +5,9 @@ hist = {
 };
 
 function update_hint_char(ch) {
-  $('.hint_char').text('Symbol ' + toHex(ch) + ' (' + ch + ')');
+  let s = 'Symbol ' + toHex(ch) + ' (' + ch + ')';
+  $('.hint_char').text(s);
+  $('#'+get_current_canvas_id()).prop('title', s);
 }
 
 function spinnerValue(obj) {
