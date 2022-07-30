@@ -564,6 +564,10 @@ function get_char_code(id, x, y) {
   let sx = col * g * fw;
   let sy = row * g * fh;
 
+  let b = $('.symbol-overlay')
+  b.css({left: sx+1, top: sy+1, width: bw-1, height: bh-1});
+  b.show();
+
   if (id == 'canvas_logo') {
       // need to remap symbol according to the data
       // not cached, might be a little bit on the slower side

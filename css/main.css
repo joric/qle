@@ -51,10 +51,8 @@ canvas {
   position: absolute;
   top: 0; left: 0;
   width: 50; height: 20;
-  /*
-  background-color: #007bff;
-  opacity: 0.5;
-  */
+  background-color: grey;
+  opacity: 0.25;
   color: grey;
   font-size: 12px;
   pointer-events: none;
