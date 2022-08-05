@@ -1,5 +1,5 @@
 var symbolOverlay = false;
-var symbolText = false;
+var symbolText = true;
 
 hist = {
   'canvas_font': [],
