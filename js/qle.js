@@ -1,3 +1,6 @@
+var symbolOverlay = false;
+var symbolText = false;
+
 hist = {
   'canvas_font': [],
   'canvas_logo': [],
@@ -66,7 +69,7 @@ function add_grid(id, g) {
     '  <rect width="100%" height="100%" fill="url(#' + id + '_grid)" />';
 
   // add symbol numbers
-  if (w>64) {
+  if (symbolText && w>64) {
     for (let y=0; y<ch; y+=h) {
       for (let x=0; x<cw; x+=w) {
         let cc = get_char_code(id, x/g, y/g);
@@ -557,16 +560,16 @@ function get_char_code(id, x, y) {
 
   let ch = cols * row + col;
 
-  // this may be unused for now (screen cell offset/size)
-  let g = get_cell_size();
-  let bw = g * fw;
-  let bh = g * fh;
-  let sx = col * g * fw;
-  let sy = row * g * fh;
-
-  let b = $('.symbol-overlay')
-  b.css({left: sx+1, top: sy+1, width: bw-1, height: bh-1});
-  b.show();
+  if (symbolOverlay) {
+    let g = get_cell_size();
+    let bw = g * fw;
+    let bh = g * fh;
+    let sx = col * g * fw;
+    let sy = row * g * fh;
+    let b = $('.symbol-overlay')
+    b.css({left: sx+1, top: sy+1, width: bw-1, height: bh-1});
+    b.show();
+  }
 
   if (id == 'canvas_logo') {
       // need to remap symbol according to the data
