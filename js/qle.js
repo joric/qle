@@ -7,6 +7,15 @@ hist = {
   'canvas_raw': []
 };
 
+function clear_image() {
+  let id = get_current_canvas_id();
+  var canvas = document.getElementById(id);
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  capture_image(id);
+  parse_image(id);
+}
+
 function update_hint_char(ch) {
   let s = 'Symbol ' + toHex(ch) + ' (' + ch + ')';
   $('.hint_char').text(s);
@@ -126,7 +135,6 @@ function capture_image(id) {
 
   hist[id].unshift(capturedImage);
 }
-
 
 function set_pixel(id, x, y) {
   var canvas = document.getElementById(id);
@@ -845,6 +853,13 @@ function get_char_code(id, x, y) {
         load_image(e.target.result);
       });
     });
+
+    $('#clear').on('click', function(e) {
+      if (confirm('Are you sure you want to clear image?')) {
+        clear_image();
+      }
+    });
+
   });
 
 })($);
