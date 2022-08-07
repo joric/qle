@@ -78,7 +78,8 @@ function add_grid(id, g) {
     '  <rect width="100%" height="100%" fill="url(#' + id + '_grid)" />';
 
   // add symbol numbers
-  if (symbolText && w>64) {
+  let size = $("input[name='scale']:checked").attr('id');
+  if (symbolText && size=='large') {
     for (let y=0; y<ch; y+=h) {
       for (let x=0; x<cw; x+=w) {
         let cc = get_char_code(id, x/g, y/g);
