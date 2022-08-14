@@ -861,6 +861,10 @@ function get_char_code(id, x, y) {
       }
     });
 
+    $('input[type=number]').blur(function(e) {
+      $(this).val(spinnerValue($(this)));
+    });
+
   });
 
 })($);
