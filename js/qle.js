@@ -1,5 +1,7 @@
-var symbolOverlay = false;
-var symbolText = true;
+let symbolOverlay = false;
+let symbolText = true;
+let maxImageWidth = 1024;
+let maxImageHeight = 1024;
 
 hist = {
   'canvas_font': [],
@@ -24,7 +26,7 @@ function update_hint_char(ch) {
 
 function spinnerValue(obj) {
   let vmin = parseInt(obj.attr('min') ?? 1);
-  let vmax = parseInt(obj.attr('max') ?? 512);
+  let vmax = parseInt(obj.attr('max') ?? Number.MAX_SAFE_INTEGER);
   let step = parseInt(obj.attr('step') ?? 1);
   let val = parseInt('0'+obj.val());
   let res = Math.min(vmax, Math.max(vmin, Math.ceil(val/step)*step));
@@ -38,8 +40,8 @@ function load_image(src) {
   var img = new Image();
 
   img.onload = function() {
-    if (this.width > 512 || this.height > 512) {
-      alert('Image is too large ('+this.width+'x'+this.height+'). 512x512 pixels max.');
+    if (this.width > maxImageWidth || this.height > maxImageHeight) {
+      alert('The image is too large ('+this.width+'x'+this.height+'), maximum '+maxImageWidth+'x'+maxImageHeight+' allowed.').
       src = '';
       return;
     }
