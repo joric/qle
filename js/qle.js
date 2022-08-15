@@ -539,7 +539,8 @@ function parse_text(text, is_font) {
   return {
     'data': arr,
     'fw': fw,
-    'fh': fh
+    'fh': fh,
+    'maxcol': maxcol
   };
 }
 
@@ -631,7 +632,9 @@ function get_char_code(id, x, y) {
 
   function load_raw_file(url) {
     $('#raw').load(url, function(text) {
-      render_raw("canvas_raw", parse_text(text).data);
+      let p = parse_text(text);
+      $('#iw').val(p.maxcol);
+      render_raw("canvas_raw", p.data);
     });
   }
 
