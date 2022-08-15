@@ -39,7 +39,7 @@ function load_image(src) {
 
   img.onload = function() {
     if (this.width > 512 || this.height > 512) {
-      alert("Image is too large! 512x512 pixels max.");
+      alert('Image is too large ('+this.width+'x'+this.height+'). 512x512 pixels max.');
       src = '';
       return;
     }
