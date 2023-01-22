@@ -1,4 +1,4 @@
-let symbolOverlay = false;
+let symbolOverlay = true;
 let symbolText = true;
 let maxImageWidth = 1024;
 let maxImageHeight = 1024;
