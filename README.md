@@ -5,7 +5,7 @@ Font and graphics editor for the [QMK](https://github.com/qmk/qmk_firmware) keyb
 * https://joric.github.io/qle
 
 QMK uses "classic" fixed-space Adafruit_GFX 1.0 bitmap font.
-There are two basic API calls in the latest [QMK OLED Driver](https://beta.docs.qmk.fm/using-qmk/hardware-features/displays/feature_oled_driver):
+There are two basic API calls in the latest [QMK OLED Driver](https://docs.qmk.fm/#/feature_oled_driver):
 
 * `oled_write_P(const char *string, bool invert)` Writes zero-terminated string using default font (0x0A is line break)
 * `oled_write_raw_P(const char *data, uint16_t size)` Writes string of characters in 0..255 range using data as 8x8 font
@@ -18,7 +18,7 @@ There are a few ways of adding a custom font to your keyboard (all they use loca
 
 The latest official way is redefining `OLED_FONT_H` in the `config.h` of your keymap (there also other settings):
 
-* https://beta.docs.qmk.fm/using-qmk/hardware-features/displays/feature_oled_driver
+* https://docs.qmk.fm/#/feature_oled_driver
 
 
 ## References
