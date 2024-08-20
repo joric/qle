@@ -830,20 +830,27 @@ function get_char_code(id, x, y) {
       }
     });
 
+    async function saveToFile(data, filename) {
+      const fileHandle = await window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [{
+          description: '.png files',
+          accept: {'image/png': ['.png']},
+        }],
+      });
+      const writableStream = await fileHandle.createWritable();
+      await writableStream.write(data);
+      await writableStream.close();
+    }
 
     $('#download').on('click', function(e) {
       var id = get_current_canvas_id();
       var canvas = document.getElementById(id);
       var ctx = canvas.getContext('2d');
-      var dt = canvas.toDataURL('image/png');
-      dt = dt.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
-      dt = dt.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=Canvas.png');
       var filename = id + '.png';
-      var a = document.body.appendChild(document.createElement("a"));
-      a.href = dt;
-      a.download = filename;
-      a.click();
-      a.remove();
+      canvas.toBlob(blob=>{
+        saveToFile(blob, filename);
+      });
     });
 
     $('#upload').on('click', function(e) {
