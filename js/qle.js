@@ -837,14 +837,6 @@ function get_char_code(id, x, y) {
       });
     });
 
-
-    $('#download').on('click1', function(e) {
-      var id = get_current_canvas_id();
-      document.getElementById(id).toBlob(blob=>{
-        showSaveFilePicker({suggestedName: id+'.png'}).then(f=>f.createWritable()).then(f=>(t=f).write(blob)).then(f=>t.close());
-      });
-    });
-
     $('#upload').on('click', function(e) {
         $('#file').click();
     });
