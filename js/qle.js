@@ -833,7 +833,7 @@ function get_char_code(id, x, y) {
     $('#download').on('click', function(e) {
       var id = get_current_canvas_id();
       document.getElementById(id).toBlob(blob=>{
-        showSaveFilePicker({suggestedName: id+'.png'}).then(f=>f.createWritable()).then(f=>(f.write(blob) && f.close()))
+        showSaveFilePicker({suggestedName: id+'.png'}).then(f=>f.createWritable()).then(f=>f.write(blob).then(()=>f.close()));
       });
     });
 
