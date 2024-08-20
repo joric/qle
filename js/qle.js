@@ -830,26 +830,10 @@ function get_char_code(id, x, y) {
       }
     });
 
-    async function saveToFile(data, filename) {
-      const fileHandle = await window.showSaveFilePicker({
-        suggestedName: filename,
-        types: [{
-          description: '.png files',
-          accept: {'image/png': ['.png']},
-        }],
-      });
-      const writableStream = await fileHandle.createWritable();
-      await writableStream.write(data);
-      await writableStream.close();
-    }
-
     $('#download').on('click', function(e) {
       var id = get_current_canvas_id();
-      var canvas = document.getElementById(id);
-      var ctx = canvas.getContext('2d');
-      var filename = id + '.png';
-      canvas.toBlob(blob=>{
-        saveToFile(blob, filename);
+      document.getElementById(id).toBlob(blob=>{
+        showSaveFilePicker({suggestedName: id+'.png'}).then(f=>f.createWritable()).then(f=>(t=f).write(blob)).then(f=>t.close());
       });
     });
 
