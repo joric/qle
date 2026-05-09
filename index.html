@@ -44,10 +44,12 @@
     </nav>
 
     <script>
-      const x = document.querySelector('#theme-switch');
-      x.checked = localStorage.theme === 'dark';
-      document.documentElement.dataset.bsTheme = x.checked ? 'dark' : 'light';
-      x.onchange = _ => { const mode = x.checked ? 'dark' : 'light'; localStorage.theme = mode; document.documentElement.dataset.bsTheme = mode;};
+      const tsw = document.querySelector('#theme-switch');
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = localStorage.theme === 'dark' || (!localStorage.theme && systemDark);
+      tsw.checked = isDark;
+      document.documentElement.dataset.bsTheme = isDark ? 'dark' : 'light';
+      tsw.onchange = _ => document.documentElement.dataset.bsTheme = localStorage.theme = tsw.checked ? 'dark' : 'light';
     </script>
 
     <div class="container">
