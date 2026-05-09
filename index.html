@@ -5,75 +5,123 @@
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
     <meta content="" name="description" />
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-    <link href="css/bootstrap.min.css" rel="stylesheet" />
+
+<!--
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+-->
+
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <script src="js/bootstrap.bundle.min.js"></script>
+
     <link href="css/main.css" rel="stylesheet" />
     <script src="js/jquery.min.js"></script>
     <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+
     <script src="js/qle.js"></script>
     <title>QMK Logo Editor</title>
   </head>
+
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+    <nav class="navbar bg-body-tertiary">
       <div class="container">
-        <a class="navbar-brand" href="">QMK Logo Editor</a>
-        <div class="collapse navbar-collapse" id="navbars">
-          <div class="nav navbar-nav" id="nav-tab" role="tablist">
-            <span class="text-light">Ctrl+C to copy image to the clipboard, Ctrl+V to paste image from the clipboard, Ctrl+Z/Ctrl+Y to undo/redo.</span>
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <a class="navbar-brand" href=".">QMK Logo Editor</a>
+      
+          <span class="text-center d-none d-lg-inline">Ctrl+C to copy image to clipboard, Ctrl+V to paste image, Ctrl+Z/Ctrl+Y to undo/redo.</span>
+      
+          <div class="d-flex align-items-center gap-2">
+            <label for="theme-switch" class="text-body cursor-pointer">
+              &#9680;
+            </label>
+            <div class="form-check form-switch m-0">
+              <input class="form-check-input" id="theme-switch" type="checkbox" role="switch">
+            </div>
           </div>
         </div>
       </div>
     </nav>
+
+    <script>
+      const x = document.querySelector('#theme-switch');
+      x.checked = localStorage.theme === 'dark';
+      document.documentElement.dataset.bsTheme = x.checked ? 'dark' : 'light';
+      x.onchange = _ => { const mode = x.checked ? 'dark' : 'light'; localStorage.theme = mode; document.documentElement.dataset.bsTheme = mode;};
+    </script>
+
     <div class="container">
-      <nav>
-        <div class="nav nav-pills mt-3 mb-2" id="nav-tab" role="tablist">
-          <a class="nav-item nav-link active" data-toggle="tab" href="#nav-font" id="nav-font-tab" role="tab" title="Pixel font, arbitrary font width, height is 8 or 16 pixels.">Font</a>
-          <a class="nav-item nav-link" data-toggle="tab" href="#nav-logo" id="nav-logo-tab" role="tab" title="Arbitrary text (uses font characters), 0x10 for newline">Text</a>
-          <a class="mr-2 nav-item nav-link" data-toggle="tab" href="#nav-raw" id="nav-raw-tab" role="tab" title="Arbitrary bitmap data, fixed tile width and height (8x8).">Raw</a>
-          <div>
-            <div class="mr-2 btn-group btn-group-toggle" data-toggle="buttons" id="scale">
-              <label class="btn btn-secondary active" title="1x">
-                <input id="small" name="scale" type="radio">Small</input>
-              </label>
-              <label class="btn btn-secondary" title="5x">
-                <input checked="checked" id="medium" name="scale" type="radio">Medium</input>
-              </label>
-              <label class="btn btn-secondary" title="16x">
-                <input id="large" name="scale" type="radio">Large</input>
-              </label>
-            </div>
-            <div class="mr-2 btn-group">
-              <button class="btn btn-secondary" id="undo" type="button" title="Ctrl+Z">Undo</button>
-              <button class="btn btn-primary" id="redo" type="button" title="Ctrl+Y">Redo</button>
-            </div>
-            <div class="mr-2 btn-group">
-              <button class="btn btn-secondary" id="upload" title="Upload picture in arbitrary format">Upload Image</button>
-              <input class="d-none" id="file" type="file" />
-              <button class="btn btn-primary" id="download" title="Download .PNG">Download Image</button>
-            </div>
+      <nav class="mt-3 mb-2">
+        <div class="d-flex flex-wrap align-items-center justify-content-between- gap-3">
+          <!-- Nav pills -->
+
+          <ul class="nav nav-pills" id="nav-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="nav-font-tab" data-bs-toggle="tab" data-bs-target="#nav-font" type="button" role="tab" title="Pixel font, arbitrary font width, height is 8 or 16 pixels.">Font</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="nav-logo-tab" data-bs-toggle="tab" data-bs-target="#nav-logo" type="button" role="tab" title="Arbitrary text (uses font characters), 0x10 for newline">Text</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="nav-raw-tab" data-bs-toggle="tab" data-bs-target="#nav-raw" type="button" role="tab" title="Arbitrary bitmap data, fixed tile width and height (8x8).">Raw</button>
+            </li>
+          </ul>
+
+          <!-- Radio button group -->
+          <div class="btn-group" role="group" id="scale">
+
+            <input type="radio" class="btn-check" name="scale" id="small" autocomplete="off">
+            <label class="btn btn-outline-secondary" for="small" title="1x">Small</label>
+
+            <input type="radio" class="btn-check" name="scale" id="medium" autocomplete="off" checked>
+            <label class="btn btn-outline-secondary" for="medium" title="5x">Medium</label>
+
+            <input type="radio" class="btn-check" name="scale" id="large" autocomplete="off">
+            <label class="btn btn-outline-secondary" for="large" title="16x">Large</label>
+
+          </div>
+
+          <!-- Undo/Redo buttons -->
+          <div class="btn-group" role="group">
+            <button class="btn btn-primary" id="undo" type="button" title="Ctrl+Z">Undo</button>
+            <button class="btn btn-secondary" id="redo" type="button" title="Ctrl+Y">Redo</button>
+          </div>
+
+          <!-- Upload/Download buttons -->
+          <div class="btn-group" role="group">
+            <button class="btn btn-primary" id="upload" title="Upload picture in arbitrary format">Upload Image</button>
+            <button class="btn btn-secondary" id="download" title="Download .PNG">Download Image</button>
             <button class="btn btn-danger" id="clear" title="Clear Image">Clear Image</button>
           </div>
+          <input class="d-none" id="file" type="file" accept="image/png"/>
         </div>
       </nav>
-      <div class="tab-content" id="nav-tabContent">
+
+      <div class="tab-content mt-3" id="nav-tabContent">
+
         <!--font-->
         <div class="tab-pane fade show active" id="nav-font" role="tabpanel">
+
           <div class="canvas-container">
             <canvas id="canvas_font"></canvas>
             <div class="grid-container"></div>
             <div class="symbol-overlay"></div>
           </div>
-          <div class="mb-2">
+
+          <div class="mb-2 pt-2">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
-              <li class="nav-item">
-                <a aria-controls="home" aria-selected="true" class="nav-link active" data-toggle="tab" href="#home" id="home-tab" role="tab">Export</a>
+
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Export</button>
               </li>
-              <li class="nav-item">
-                <a aria-controls="profile" aria-selected="false" class="nav-link" data-toggle="tab" href="#profile" id="profile-tab" role="tab">Raw data</a>
+
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Raw data</button>
               </li>
-              <li class="nav-item dropdown">
-                <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button">Examples</a>
-                <div class="dropdown-menu" id="examples">
+
+              <li class="nav-item dropdown" role="presentation">
+                <button class="nav-link dropdown-toggle" id="examples-dropdown" data-bs-toggle="dropdown" type="button" aria-expanded="false">Examples</button>
+                <div class="dropdown-menu" id="examples" aria-labelledby="examples-dropdown">
                   <a class="dropdown-item" href="https://raw.githubusercontent.com/qmk/qmk_firmware/master/keyboards/helix/glcdfont.c">helix</a>
                   <a class="dropdown-item" href="https://raw.githubusercontent.com/qmk/qmk_firmware/master/keyboards/crkbd/lib/glcdfont.c">crkbd</a>
                   <a class="dropdown-item" href="https://raw.githubusercontent.com/qmk/qmk_firmware/master/keyboards/yosino58/lib/glcdfont.c">yosino58</a>
@@ -84,42 +132,55 @@
                   <a class="dropdown-item" href="https://raw.githubusercontent.com/qmk/qmk_firmware/master/drivers/oled/glcdfont.c">drivers/oled</a>
                 </div>
               </li>
-              <li class="ml-auto">
-                <div class="float-right form-inline">
-                  <div class="mr-2">Font Width</div>
-                  <input class="form-control mr-1" id="fw" max="256" min="1" size="2" type="number" value="6" />
-                  <div class="ml-2 mr-2">Font Height</div>
-                  <input class="form-control" id="fh" max="256" min="8" size="2" step="8" type="number" value="8" />
+
+              <li class="nav-item ms-auto">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="text-nowrap">Font Width</span>
+                  <input class="form-control form-control-sm" id="fw" max="256" min="1" size="2" type="number" value="6" style="width: 70px;" />
+                  <span class="text-nowrap">Font Height</span>
+                  <input class="form-control form-control-sm" id="fh" max="256" min="8" size="2" step="8" type="number" value="8" style="width: 70px;" />
                 </div>
               </li>
+
             </ul>
           </div>
+
+          <!-- Tab content panels -->
           <div class="tab-content" id="myTabContent">
+
             <div class="tab-pane fade show active" id="home" role="tabpanel">
-              <textarea autofocus="autofocus" class="form-control" id="font" rows="12" wrap="off"></textarea>
+              <textarea autofocus="autofocus" class="form-control" id="font" rows="12" wrap="off"></textarea>  
             </div>
+
             <div class="tab-pane fade" id="profile" role="tabpanel">
               <textarea class="form-control" id="dec" rows="10" wrap="on"></textarea>
             </div>
           </div>
+
           <div class="mt-1">
             <span id="hint_font"></span>
             <span class="float-right hint_char"></span>
           </div>
+
         </div>
+
+
         <!--logo-->
         <div class="tab-pane fade" id="nav-logo" role="tabpanel">
+
           <div class="canvas-container">
             <canvas id="canvas_logo"></canvas>
             <div class="grid-container"></div>
             <div class="symbol-overlay"></div>
           </div>
-          <ul class="nav nav-tabs mb-2" id="myTab" role="tablist">
+
+          <ul class="nav nav-tabs mb-2 pt-2" id="myTab" role="tablist">
             <li class="nav-item">
               <a aria-controls="home" aria-selected="true" class="nav-link active" data-toggle="tab" href="#home" id="home1-tab" role="tab">Export</a>
             </li>
-            <li class="nav-item dropdown">
-              <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button">Examples</a>
+
+            <li class="nav-item dropdown" role="presentation">
+              <a class="nav-link dropdown-toggle" id="logo-examples-dropdown" data-bs-toggle="dropdown" type="button" aria-expanded="false">Examples</a>
               <div class="dropdown-menu" id="examples_logo">
                 <a class="dropdown-item" href="files/logo_reader.c">files/logo_reader.c</a>
                 <a class="dropdown-item" href="files/logo_apple.c">files/logo_apple.c</a>
@@ -128,6 +189,8 @@
                 <a class="dropdown-item" href="files/logo_android.c">files/logo_android.c</a>
               </div>
             </li>
+
+
           </ul>
           <textarea class="form-control" id="logo" rows="10" wrap="off"></textarea>
           <div class="mt-1">
@@ -135,6 +198,8 @@
             <span class="float-right hint_char"></span>
           </div>
         </div>
+
+
         <!--raw-->
         <div class="tab-pane fade" id="nav-raw" role="tabpanel">
           <div class="canvas-container">
@@ -142,25 +207,31 @@
             <div class="grid-container"></div>
             <div class="symbol-overlay"></div>
           </div>
-          <ul class="nav nav-tabs mb-2" id="myTab" role="tablist">
+
+          <ul class="nav nav-tabs mb-2 pt-2" id="myTab" role="tablist">
+
             <li class="nav-item">
               <a aria-controls="home" aria-selected="true" class="nav-link active" data-toggle="tab" href="#home" id="home1-tab" role="tab">Export</a>
             </li>
-            <li class="nav-item dropdown">
-              <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button">Examples</a>
+
+            <li class="nav-item dropdown" role="presentation">
+              <a class="nav-link dropdown-toggle" id="examples_raw-dropdown" data-bs-toggle="dropdown" type="button" aria-expanded="false">Examples</a>
               <div class="dropdown-menu" id="examples_raw">
                 <a class="dropdown-item" href="files/jorne_raw.c">files/jorne_raw.c</a>
                 <a class="dropdown-item" href="files/kyria_raw.c">files/kyria_raw.c</a>
                 <a class="dropdown-item" href="files/doge_raw.c">files/doge_raw.c</a>
               </div>
             </li>
-              <li class="ml-auto">
-                <div class="float-right form-inline">
-                  <div class="mr-2">Image Width</div>
-                  <input class="form-control mr-2" id="iw" max="256" min="8" size="3" type="number" value="128" step="8"/>
-                </div>
-              </li>
+
+            <li class="nav-item ms-auto">
+              <div class="d-flex align-items-center gap-2">
+                <div class="text-nowrap">Image Width</div>
+                <input class="form-control form-control-sm" id="iw" max="256" min="8" size="3" type="number" value="128" step="8" style="width: 70px;"/>
+              </div>
+            </li>
+
           </ul>
+
           <textarea class="form-control" id="raw" rows="12" wrap="off"></textarea>
           <div class="mt-1">
             <span id="hint_raw"></span>

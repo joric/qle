@@ -12,7 +12,7 @@ hist = {
 function clear_image() {
   let id = get_current_canvas_id();
   var canvas = document.getElementById(id);
-  var ctx = canvas.getContext('2d');
+  var ctx = canvas.getContext('2d', { willReadFrequently: true });
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   capture_image(id);
   parse_image(id);
@@ -36,7 +36,7 @@ function spinnerValue(obj) {
 function load_image(src) {
   var id = get_current_canvas_id();
   var canvas = document.getElementById(id);
-  var ctx = canvas.getContext('2d');
+  var ctx = canvas.getContext('2d', { willReadFrequently: true });
   var img = new Image();
 
   img.onload = function() {
@@ -124,13 +124,13 @@ function get_current_hover_id() {
 }
 
 function get_current_canvas_id() {
-  var tab = $("#nav-tab a.active")[0].id;
+  var tab = $("#nav-tab button.active")[0].id;
   return tab == 'nav-font-tab' ? "canvas_font" : (tab == 'nav-logo-tab' ? 'canvas_logo' : 'canvas_raw');
 }
 
 function capture_image(id) {
   var canvas = document.getElementById(id);
-  var ctx = canvas.getContext('2d');
+  var ctx = canvas.getContext('2d', { willReadFrequently: true });
   capturedImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
   if (hist[id].length > 1000)
@@ -141,7 +141,7 @@ function capture_image(id) {
 
 function set_pixel(id, x, y) {
   var canvas = document.getElementById(id);
-  var ctx = canvas.getContext('2d');
+  var ctx = canvas.getContext('2d', { willReadFrequently: true });
   let color = !getpixel(x, y, hist[id][0]);
   let r = g = b = color ? 255 : 0;
   let a = 255;
@@ -253,7 +253,7 @@ function getpixel(x, y, imageData) {
 
 function parse_image(canvas_id) {
   var canvas = document.getElementById(canvas_id);
-  var ctx = canvas.getContext('2d');
+  var ctx = canvas.getContext('2d', { willReadFrequently: true });
   var w = canvas.width;
   var h = canvas.height;
   var imageData = ctx.getImageData(0, 0, w, h);
@@ -376,7 +376,7 @@ function write_chars(chars, font, fw,fh, imageData, w, h) {
 
 function render_image(id, chars, font, fw, fh, w, h, is_raw) {
   var canvas = document.getElementById(id);
-  var ctx = canvas.getContext('2d');
+  var ctx = canvas.getContext('2d', { willReadFrequently: true });
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   canvas.width = w;
@@ -649,7 +649,7 @@ function get_char_code(id, x, y) {
     var id = get_current_canvas_id()
     if (hist[id].length == 0) return;
     var canvas = document.getElementById(id);
-    var ctx = canvas.getContext('2d');
+    var ctx = canvas.getContext('2d', { willReadFrequently: true });
     arrayRotate(hist[id], false);
     ctx.putImageData(hist[id][0], 0, 0);
     parse_image(id);
@@ -659,7 +659,7 @@ function get_char_code(id, x, y) {
     var id = get_current_canvas_id()
     if (hist[id].length == 0) return;
     var canvas = document.getElementById(id);
-    var ctx = canvas.getContext('2d');
+    var ctx = canvas.getContext('2d', { willReadFrequently: true });
     arrayRotate(hist[id], true);
     ctx.putImageData(hist[id][0], 0, 0);
     parse_image(id);
